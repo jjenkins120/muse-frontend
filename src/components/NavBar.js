@@ -3,7 +3,8 @@ import { Menu, Dropdown, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { userLogout } from '../actions/user'
-import { postLogout } from '../actions/posts'
+import { postLogout } from '../actions/allPosts'
+import { selectUser } from '../actions/showUser'
 
 class NavBar extends Component {
   
@@ -13,11 +14,16 @@ class NavBar extends Component {
     localStorage.removeItem('app_token')
   }
 
+  handleUserClick = () => {
+    this.props.selectUser(this.props.user)
+    // this.props.history.push(`/home/showuser/${this.props.user.id}`)
+  }
+
   render() {
     return (
       <div style={{backgroundColor: ''}}>
         <Menu pointing secondary>
-        <Link to={`/home/showuser/${this.props.user.id}`}><Menu.Item>{this.props.user.username}</Menu.Item></Link>
+        <Menu.Item onClick={() => this.props.selectUser(this.props.user)}><Link to={`/home/showuser/${this.props.user.id}`}>{this.props.user.username}</Link></Menu.Item>
           <Menu.Menu position='right'>
             <Dropdown item text='Options'>
               <Dropdown.Menu>
@@ -37,14 +43,15 @@ class NavBar extends Component {
 
 const mapStateToProps = (state) => {
   return { 
-    posts: state.posts,
+    posts: state.allPosts,
     user: state.user
   }
 }
 
 const mapDispatchToProps = {
   userLogout,
-  postLogout
+  postLogout, 
+  selectUser
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

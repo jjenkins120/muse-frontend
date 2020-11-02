@@ -3,6 +3,7 @@ import { Form, Grid, Header, Message, Segment, Icon, Image } from 'semantic-ui-r
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchUserSuccess } from '../actions/user'
+// import { fetchAllUsersSuccess } from '../actions/allUsers'
 
 class Login extends React.Component {
 
@@ -41,6 +42,12 @@ class Login extends React.Component {
         this.props.history.push('/home')
       }
     })
+    // fetch('http://localhost:3000/users')
+    // .then(resp => resp.json())
+    // .then(users => {
+    //   this.props.fetchAllUsersSuccess(users)
+    //   
+    // })
   }
 
   render(){
@@ -70,7 +77,8 @@ class Login extends React.Component {
 }
 
   const mapDispatchToProps = {
-    fetchUserSuccess
+    fetchUserSuccess,
+    // fetchAllUsersSuccess
   }
 
   export default connect(null, mapDispatchToProps)(Login);

@@ -1,6 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { currentUser } from '../actions/user'
+import { fetchPostsSuccess } from '../actions/allPosts'
+import { fetchAllUsersSuccess } from '../actions/allUsers'
+import { fetchAllUserPostsSuccess } from '../actions/userPosts'
+import { fetchFollowsSuccess } from '../actions/follows'
 import { Route, Switch } from 'react-router-dom'
 import NavBar from "./NavBar.js"
 import PostContainer from "./PostContainer.js"
@@ -8,8 +12,7 @@ import ShowPost from './ShowPost.js';
 import NewPost from './NewPost.js';
 import ShowUser from './ShowUser.js';
 import EditUser from './EditUser.js';
-import ShowFollowers from './ShowFollowers.js'
-import ShowFollowing from './ShowFollowing.js'
+import ShowFollowContainer from './ShowFollowContainer.js'
 import About from './About.js';
 
 class Home extends React.Component {
@@ -34,6 +37,26 @@ class Home extends React.Component {
             this.props.currentUser(data.user)
         })
       }
+      fetch('http://localhost:3000/posts')
+      .then(resp => resp.json())
+      .then(allPosts => {
+          this.props.fetchPostsSuccess(allPosts)
+      })
+      fetch('http://localhost:3000/users')
+      .then(resp => resp.json())
+      .then(users => {
+        this.props.fetchAllUsersSuccess(users)
+      })
+      fetch('http://localhost:3000/user_posts')
+      .then(resp => resp.json())
+      .then(userPosts => {
+        this.props.fetchAllUserPostsSuccess(userPosts)
+      })
+      fetch('http://localhost:3000/follows')
+      .then(resp => resp.json())
+      .then(follows => {
+        this.props.fetchFollowsSuccess(follows)
+      })
     }
 
     render(){
@@ -46,8 +69,7 @@ class Home extends React.Component {
               <Route exact path={'/home/newpost'} component={NewPost} />
               <Route exact path={'/home/showuser/:id'} component={ShowUser} />
               <Route exact path={'/home/edituser/:id'} component={EditUser} />
-              <Route exact path={'/home/showfollowing/:id'} component={ShowFollowing} />
-              <Route exact path={'/home/showfollowers/:id'} component={ShowFollowers} />
+              <Route exact path={'/home/showfollow/:id'} component={ShowFollowContainer} />
               <Route exact path={'/home/about'} component={About} />
             </Switch>
         </div>
@@ -58,7 +80,11 @@ class Home extends React.Component {
   
 
   const mapDispatchToProps = {
-    currentUser
+    currentUser,
+    fetchAllUsersSuccess,
+    fetchPostsSuccess, 
+    fetchAllUserPostsSuccess,
+    fetchFollowsSuccess,
   }
 
   export default connect(null, mapDispatchToProps)(Home);

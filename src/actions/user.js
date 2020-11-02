@@ -18,24 +18,32 @@ export const userLogout = () => {
     }
 }
 
-export const addFollowToUser = (user) => {
+export const addFollowingToUser = (user) => {
     return {
-        type: 'ADD_FOLLOW_TO_USER',
+        type: 'ADD_FOLLOWING_TO_USER',
         user: user
     }
 }
 
-// export const updateUser = (user) => {
-//     return {
-//         type: 'UPDATE_USER',
-//         user: user
-//     }
-// }
+export const addInspirationToUser = (post) => {
+    return {
+        type: 'ADD_INSPIRATION_TO_USER',
+        post: post
+    }
+}
 
-// export const newUser = (user) => {
-//     return {
-//         type: 'NEW_USER',
-//         user: user
-//     }
-// }
+export const newUser = (user) => {
+    return {
+        type: 'NEW_USER',
+        user: user
+    }
+}
+
+export const updateUser = (user) => {
+    return {
+        type: 'UPDATE_USER',
+        user: user
+    }
+}
+
 
