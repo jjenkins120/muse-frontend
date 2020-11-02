@@ -44,7 +44,7 @@ class PostContainer extends React.Component {
       case 'All':
         // PROVIDE A FUNCTION THAT FILTERS OUT POSTS THAT HAVE NOT INSPIRED THE USER
         return postsArray
-      case 'Inspiring Works':
+      case 'Works that Inspire Me':
         //PERHAPS RUN A FUNCTION THAT FILTERS OUT THE HAVE INSPIRED THE USER
         const inspirationId = this.props.user.inspirations.map(postObj => postObj.id)
         return this.props.allPosts.filter(postObj => inspirationId.includes(postObj.id))
@@ -90,8 +90,8 @@ class PostContainer extends React.Component {
             style={{backgroundColor: ''}}
           />
           <Menu.Item
-            name='Inspiring Works'
-            active={activeItem === 'Inspiring Works'}
+            name='Works that Inspire Me'
+            active={activeItem === 'Works that Inspire Me'}
             onClick={this.handleItemClick}
             style={{backgroundColor: ''}}
           />

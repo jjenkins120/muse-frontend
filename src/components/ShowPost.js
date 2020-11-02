@@ -166,7 +166,7 @@ class ShowPost extends React.Component {
                             {this.renderInspiredBy()}
                             </Segment>
                             <Segment>
-                                Inspiring: 
+                            This work has inspired the following:
                             {this.renderPostsInspiredPosts()}
                             </Segment>
                             {/* create boolean function that if there are no inspire works, displays a message that says yet to inspire, otherwise tile all of the works it has inspired */}

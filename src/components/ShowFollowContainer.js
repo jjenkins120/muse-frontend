@@ -8,7 +8,7 @@ import FollowTile from "./FollowTile.js"
 class ShowFollowContainer extends React.Component {
     
     state = { 
-        activeItem: 'Followers',
+        activeItem: this.props.location.state.activeItem,
         searchQuery: '', 
         sortBy: 'Sort',
         // triggered: this.props.follow
@@ -61,12 +61,15 @@ class ShowFollowContainer extends React.Component {
 
     render() {
         const { activeItem } = this.state
-        // *******NEEDS TO INCLUDE TAGS********
-        const searchedFollowers = this.props.showUser.followers.filter(followObj => {
+        const showFollowerArray = this.props.showUser.followers.map(followerObj => followerObj.id)
+        const filteredFollowerArray = this.props.allUsers.filter(userObj => showFollowerArray.includes(userObj.id))
+        const searchedFollowers = filteredFollowerArray.filter(followObj => {
             const fullName = followObj.first_name + " " + followObj.last_name
             return (followObj.first_name.includes(this.state.searchQuery))||(followObj.last_name.includes(this.state.searchQuery))||(fullName.includes(this.state.searchQuery)) 
         })
-        const searchedFollowing = this.props.showUser.following.filter(followObj => {
+        const showFollowingArray = this.props.showUser.following.map(followerObj => followerObj.id)
+        const filteredFollowingArray = this.props.allUsers.filter(userObj => showFollowingArray.includes(userObj.id))
+        const searchedFollowing = filteredFollowingArray.filter(followObj => {
             const fullName = followObj.first_name + " " + followObj.last_name
             return (followObj.first_name.includes(this.state.searchQuery))||(followObj.last_name.includes(this.state.searchQuery))||(fullName.includes(this.state.searchQuery)) 
         })

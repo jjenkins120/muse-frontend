@@ -20,12 +20,12 @@ handlePostClick = (id) => {
     this.props.selectPost(foundPost)
 }
 
-renderFollow = (follow) => {
-  return follow.map(followObj =>{
-      return <Segment onClick={() => this.handleFollowClick(followObj.id)}><Link to={`/home/showuser/${followObj.id}`}>{followObj.first_name}</Link></Segment>
-  })  
+// renderFollow = (follow) => {
+//   return follow.map(followObj =>{
+//       return <Segment onClick={() => this.handleFollowClick(followObj.id)}><Link to={`/home/showuser/${followObj.id}`}>{followObj.first_name}</Link></Segment>
+//   })  
    
-}
+// }
 
 renderPosts = (posts) => {
     return posts.map(postObj =>{
@@ -65,11 +65,13 @@ renderBtns = () => {
                         </Grid.Column>
                         <Grid.Column width={3}>
                         <br/>
-                            Followers: {this.props.showUser.followers.length === 0 ? "0" : <Link to={`/home/showfollow/${this.props.showUser.id}`}>{this.props.showUser.followers.length}</Link>}
-                            {this.renderFollow(this.props.showUser.followers)}
+                            Followers: {this.props.showUser.followers.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${this.props.showUser.id}`, state: {activeItem: 'Followers'} } } >{this.props.showUser.followers.length}</Link>}
+                            {/* {this.renderFollow(this.props.showUser.followers)} */}
+                            
+
                         <br/>
-                            Following: {this.props.showUser.following.length === 0 ? "0" : <Link to={`/home/showfollow/${this.props.showUser.id}`}>{this.props.showUser.following.length}</Link>}
-                            {this.renderFollow(this.props.showUser.following)}
+                            Following: {this.props.showUser.following.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${this.props.showUser.id}`, state: {activeItem: 'Following'} } } >{this.props.showUser.following.length}</Link>}
+                            {/* {this.renderFollow(this.props.showUser.following)} */}
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
