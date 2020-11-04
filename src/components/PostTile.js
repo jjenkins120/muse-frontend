@@ -23,11 +23,7 @@ class PostTile extends React.Component {
                             By {postInstance.user.first_name} {postInstance.user.last_name}
                         </Card.Description>
                     </Card.Content>
-                </Link>
-                <Segment>
-                    <Icon name='like' />
-                        {postInstance.likes}
-                </Segment>   
+                </Link> 
                 </Card>
             </div>
         )

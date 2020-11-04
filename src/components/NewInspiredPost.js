@@ -1,11 +1,14 @@
 import React from 'react'
-import { Form, Grid, Button, Dropdown } from 'semantic-ui-react'
+import { Form, Grid, Button, Dropdown, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { addPost } from '../actions/allPosts'
 import { addPostToUser } from '../actions/user'
 import { fetchAllUsersSuccess } from '../actions/allUsers'
 import { fetchPostsSuccess } from '../actions/allPosts'
+import { fetchAllUserPostsSuccess } from '../actions/userPosts'
+import { deleteInspirationFromUser } from '../actions/user'
+import PostTile from './PostTile.js'
 
 const options = [
     { key: 'v', text: 'Video', value: 'video' },
@@ -13,38 +16,33 @@ const options = [
     { key: 'i', text: 'Image', value: 'image', name:'category'},
   ]
 
-class NewPost extends React.Component {
+class NewInspiredPost extends React.Component {
     state = {
         title:'', 
         description:'',
         link_url: '',
-        post_id: null,
+        post_id: this.props.showPost.id,
         user_id: this.props.user.id,
         likes: 0,
         category: '',
-        value: 'no', 
-        inspiredBy: 'Which One?'
-        // value: (this.props.location.state.value) ? 'yes':'no',
-        // inspiredBy: (this.props.location.state.inspiredBy) ? this.props.location.state.inspiredBy : 'Which One?',
     }
 
-    // handleChange = (e) => {
-    //   const newPostInfo = {...this.state.postInfo,
-    //     [e.target.name]: e.target.value 
-    //   }
-    //   this.setState({postInfo: newPostInfo})
-    // }
     sendNewPostFetch = () => {
-      fetch('http://localhost:3000/posts')
-      .then(resp => resp.json())
-      .then(allPosts => {
-          this.props.fetchPostsSuccess(allPosts)
-      })
-      fetch('http://localhost:3000/users')
-      .then(resp => resp.json())
-      .then(users => {
-        this.props.fetchAllUsersSuccess(users)
-      })
+        fetch('http://localhost:3000/user_posts')
+        .then(resp => resp.json())
+        .then(userPosts => {
+        this.props.fetchAllUserPostsSuccess(userPosts)
+        })
+        fetch('http://localhost:3000/posts')
+        .then(resp => resp.json())
+        .then(allPosts => {
+            this.props.fetchPostsSuccess(allPosts)
+        })
+        fetch('http://localhost:3000/users')
+        .then(resp => resp.json())
+        .then(users => {
+            this.props.fetchAllUsersSuccess(users)
+        })
     }
 
     handleChange = (e) => {
@@ -52,15 +50,6 @@ class NewPost extends React.Component {
         [e.target.name]: e.target.value 
       }) 
     }
-
-    // handleCatChange = (e) => {
-    //   const newPostInfo = {...this.state.postInfo,
-    //     [e.target.options.name]: e.target.options.value 
-    //   }
-    //   this.setState({postInfo: newPostInfo})
-    // }
-
-    handleBtnChange = (e, { value }) => this.setState({ value, inspiredBy: 'Which One?' })
 
     handleSubmit = (e) => {
       e.preventDefault()
@@ -74,22 +63,27 @@ class NewPost extends React.Component {
       fetch('http://localhost:3000/posts', reqObj)
       .then(resp => resp.json())
       .then(newPost => {
-        this.sendNewPostFetch()
         this.props.addPostToUser(newPost)
-        alert('New post added!')
+      })
+      const userPostToDelete = this.props.userPosts.find(userPostObj => {
+      return userPostObj.user_id === this.props.user.id && userPostObj.post_id === this.props.showPost.id  
+    })
+      const delreqObj = {
+          method: 'DELETE'
+      }
+      fetch(`http://localhost:3000/user_posts/${userPostToDelete.id}`, delreqObj)
+      .then(resp => resp.json())
+      .then(() => {
+        this.sendNewPostFetch()
+        this.props.deleteInspirationFromUser(this.props.showPost.id)
+        alert('New post added! Note: the inspired piece has been removed from your inspirations')
         this.props.history.push('/home')
       })
     }
   
-    renderDropDown = () => {
-       return <Dropdown text={this.state.inspiredBy} selection><Dropdown.Menu><Dropdown.Header/>{this.renderDropdownChoices()}</Dropdown.Menu></Dropdown>
-    }
-
-
-    renderDropdownChoices = () => {
-      return this.props.allPosts.map(postObj => {
-           return <Dropdown.Item key={postObj.title} text={postObj.title} value={postObj.title} id={postObj.id} onClick={() => this.setState({inspiredBy: postObj.title, post_id: postObj.id })}/>
-        })
+    renderPostTile = () => {
+        const renderPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id)
+        return <Segment style={{backgroundColor: '#F0F8FF'}}><PostTile post={renderPost}/></Segment>
     }
 
     handleMenuClick = (e) => {
@@ -97,7 +91,6 @@ class NewPost extends React.Component {
             inspiredBy: e.target.text,
             post_id: e.target.id,
         })
-        
     }
 
     render(){
@@ -120,25 +113,14 @@ class NewPost extends React.Component {
                         <Form.Select fluid label='Category' options={options} placeholder='Category'/>
                     </Form.Group>
                     <Form.Group inline>
-                        <label>Is this inspired by other work?</label>
-                        <Form.Radio
-                            label='Yes'
-                            value='yes'
-                            checked={value === 'yes'}
-                            onChange={this.handleBtnChange}
-                        />
-                        <Form.Radio
-                            label='No'
-                            value='no'
-                            checked={value === 'no'}
-                            onChange={this.handleBtnChange}
-                        />
-                        </Form.Group>
-                        {this.state.value === 'yes' ? this.renderDropDown() : null }
+                        This submission is inspired by:
+                        {this.renderPostTile()}    
+                    </Form.Group>
+                        {/* {this.state.value === 'yes' ? this.renderDropDown() : null } */}
                     <Button.Group>
                       <Form.Button primary>Submit</Form.Button>
                       <Button.Or />
-                      <Link to={`/home`}><Button style={{ color: "white"}}>Wall</Button></Link>
+                      <Link to={`/home/showpost/${this.props.showPost.id}`}><Button style={{ color: "white"}}>Cancel</Button></Link>
                     </Button.Group>
                   </Form>
                 </Grid.Column>
@@ -148,12 +130,13 @@ class NewPost extends React.Component {
     }
 }    
 
-
     const mapStateToProps = (state) => {
         return { 
         user: state.user, 
         allPosts: state.allPosts,
-        allUsers: state.allUsers
+        allUsers: state.allUsers,
+        userPosts: state.userPosts,
+        showPost: state.showPost
         }
     }
   
@@ -162,6 +145,8 @@ class NewPost extends React.Component {
         addPostToUser, 
         fetchAllUsersSuccess,
         fetchPostsSuccess,
+        fetchAllUserPostsSuccess, 
+        deleteInspirationFromUser
     }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewPost);
+export default connect(mapStateToProps, mapDispatchToProps)(NewInspiredPost);

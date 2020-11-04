@@ -4,6 +4,7 @@ import { Form, Button, Grid } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updateUser } from '../actions/user'
+import { fetchAllUsersSuccess } from '../actions/allUsers'
 
 
 class EditUser extends React.Component {
@@ -24,6 +25,14 @@ class EditUser extends React.Component {
         following: this.props.user.following,
       }
 
+
+      sendNewAllUsersFetch = () => {
+        fetch('http://localhost:3000/users')
+        .then(resp => resp.json())
+        .then(users => {
+          this.props.fetchAllUsersSuccess(users)
+        })
+      }
       
       handleChange = (e) => {
           this.setState({
@@ -46,6 +55,7 @@ class EditUser extends React.Component {
             .then(resp => resp.json())
             .then(updatedUser => {
                 this.props.updateUser(updatedUser)
+                this.sendNewAllUsersFetch()
                 this.props.history.push('/home')
                 alert(`Your profile has been updated!`)
             })
@@ -100,7 +110,8 @@ const mapStateToProps = (state) => {
   }
   
   const mapDispatchToProps = {
-    updateUser
+    updateUser,
+    fetchAllUsersSuccess
   }
 
   export default connect(mapStateToProps, mapDispatchToProps)(EditUser);

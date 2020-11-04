@@ -3,25 +3,71 @@ import { connect } from 'react-redux'
 import { Segment, Image, Card, Icon, Button, Grid } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { addFollowingToUser } from '../actions/user'
-import { addFollowerToOtherUser } from '../actions/allUsers'
+// import { addFollowerToOtherUser } from '../actions/allUsers'
 import { addInspirationToUser } from '../actions/user'
-import { addInspiredUserToPost } from '../actions/allPosts'
-import { deletePost } from '../actions/allPosts'
-import { deleteUserPost } from '../actions/userPosts'
-import { deleteShowUserPost } from '../actions/showUser'
-import { deletePostInCertainUser } from '../actions/allUsers'
+// import { addInspiredUserToPost } from '../actions/allPosts'
+import { fetchPostsSuccess } from '../actions/allPosts'
+import { fetchAllUsersSuccess } from '../actions/allUsers'
+import { fetchAllUserPostsSuccess } from '../actions/userPosts'
+import { fetchFollowsSuccess } from '../actions/follows'
+import { deleteUsersPost } from '../actions/user'
+import { deleteInspirationFromUser } from '../actions/user'
 import PostTile from "./PostTile.js"
 import { selectPost } from '../actions/showPost'
 import { selectUser } from '../actions/showUser'
-import user from '../reducers/user'
+
 
 class ShowPost extends React.Component { 
 
-    // componentDidMount(){
-    //     const postToSend = this.props.allPosts.find(postObj => postObj.id === parseInt(this.props.match.params.id))   
-    //     this.props.selectPost(postToSend)
-    // }
-    
+    sendNewDelFetch = () => {
+        fetch('http://localhost:3000/posts')
+        .then(resp => resp.json())
+        .then(allPosts => {
+            this.props.fetchPostsSuccess(allPosts)
+        })
+        fetch('http://localhost:3000/users')
+        .then(resp => resp.json())
+        .then(users => {
+          this.props.fetchAllUsersSuccess(users)
+        })
+        fetch('http://localhost:3000/user_posts')
+        .then(resp => resp.json())
+        .then(userPosts => {
+          this.props.fetchAllUserPostsSuccess(userPosts)
+        })
+    }
+
+    sendNewFolFetch = () => {
+        fetch('http://localhost:3000/follows')
+        .then(resp => resp.json())
+        .then(follows => {
+            this.props.fetchFollowsSuccess(follows)
+        })
+        fetch('http://localhost:3000/users')
+        .then(resp => resp.json())
+        .then(users => {
+          this.props.fetchAllUsersSuccess(users)
+        })
+    }
+
+    sendInspireFetch = () => {
+        fetch('http://localhost:3000/users')
+        .then(resp => resp.json())
+        .then(users => {
+            this.props.fetchAllUsersSuccess(users)
+        })
+        fetch('http://localhost:3000/user_posts')
+        .then(resp => resp.json())
+        .then(userPosts => {
+            this.props.fetchAllUserPostsSuccess(userPosts)
+        })
+        fetch('http://localhost:3000/posts')
+        .then(resp => resp.json())
+        .then(allPosts => {
+            this.props.fetchPostsSuccess(allPosts)
+        })
+    }
+
     handleFollowClick = () => {
         console.log('handle follow click')
         const newFollow = {
@@ -39,23 +85,17 @@ class ShowPost extends React.Component {
         .then(resp => resp.json())
         .then(newFollow => {
             console.log(newFollow)
+            this.sendNewFolFetch()
             this.props.addFollowingToUser(this.props.showPost.user)
-            this.props.addFollowerToOtherUser(this.props.user, this.props.showPost.user.id)
+            alert(`You are now following ${this.props.showPost.user.first_name} ${this.props.showPost.user.last_name}`)
         })
-        // this.setState({
-        //     isFollowing: !this.state.isFollowing
-        // })
     }
 
-    handleUnfollowClick = () => {
-        console.log('handle UNfollow click')
-        // send a delete request to follows in the backend 
+    followBtn = () => {
+        const postUser = this.props.allUsers.find(userObj => userObj.id === this.props.showPost.user.id)
+        const isFollowing = this.props.user.following.find(followObj => followObj.id === postUser.id)
+        return isFollowing ? "Following" : <Button onClick={this.handleFollowClick}>Follow</Button>
     }
-
-    // followBtn = () => {
-    //     const isFollowing = this.props.showPost.user.following.find(followObj => followObj.id === this.props.showPost.user.id)
-    //     return isFollowing ? <Button onClick={this.handleUnfollowClick}>Unfollow</Button> : <Button onClick={this.handleFollowClick}>Follow</Button>
-    // }
 
     handleDelClick = (id) => {
         console.log(id)
@@ -66,45 +106,81 @@ class ShowPost extends React.Component {
         })
         if (userPostArray.length !== 0){
             userPostArray.forEach(userPostObj => {
-            fetch(`http://localhost:3000/user_posts/${userPostObj.id}`, {method: 'DELETE'})
+            const reqObj = {
+                method: 'DELETE'
+            }
+            fetch(`http://localhost:3000/user_posts/${userPostObj.id}`, reqObj)
             .then(resp => resp.json())
             .then(() => {
                 console.log('success')
-                this.props.deleteUserPost(userPostObj.id)
                 })
             })
-            this.deletePost(id) 
+            this.updatePostsWithIds() 
         } else {
-            this.deletePost(id)
+            this.updatePostsWithIds()
+        }
+    }
+
+    updatePostsWithIds = () => {
+        const inspiredPostsIds = this.props.showPost.posts.map(postObj => postObj.id)
+        if (inspiredPostsIds.length !== 0){
+            inspiredPostsIds.forEach(inspiredPostId => {
+                const updatedPost = {
+                    post_id: null
+                } 
+                const reqObj = {
+                    method: `PATCH`,
+                    headers: {
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify(updatedPost)
+                }
+                fetch(`http://localhost:3000/posts/${inspiredPostId}`, reqObj)
+                .then(resp => resp.json())
+                .then(updatedPost => {
+                    console.log(`${updatedPost.title}'s post_id is now null`)
+
+                })
+            })
+            this.deletePost()
+        } else {
+            this.deletePost()
         }
     }
     
-    deletePost = (id) => {
-        fetch(`http://localhost:3000/posts/${id}`, {method: 'DELETE'})
+    deletePost = () => {
+        fetch(`http://localhost:3000/posts/${this.props.showPost.id}`, {method: 'DELETE'})
         .then(resp => resp.json())
         .then(() => {
-            this.props.deletePost(id)
-            this.props.deleteShowUserPost(id)
+            this.props.deleteUsersPost(this.props.showPost.id)
+            this.sendNewDelFetch()
             this.props.history.push('/home')
             alert('Your Post is deleted!')
         })
     } 
 
     renderPostsInspiredPosts = () => {
-        // const postArray = this.state.posts.map(postObj => postObj.id)
-        // const postToDisplay = this.props.posts.filter(postObj => {
-        //    return postArray.includes(postObj.id) 
-        // })
-        return this.props.showPost.posts.map(postObj => {
+        const showingPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id) 
+        return showingPost.posts.map(postObj => {
             return <Segment><Link to={`/home/showpost/${postObj.id}`}><PostTile post={postObj}/></Link></Segment>
         })
     }
 
     renderInspiredBy = () => {
-        if (this.props.showPost.post){
-            const foundPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.post.id)
-            return <Segment><Link to={`/home/showpost/${foundPost.id}`}><PostTile post={foundPost}/></Link></Segment>
+        const showingPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id)
+        if (showingPost.post){
+            return <Segment><Link to={`/home/showpost/${showingPost.post.id}`}><PostTile post={showingPost.post}/></Link></Segment>
         } 
+    }
+
+    renderFeelingInspiredBtns = () => {
+        const inspirationIds = this.props.user.inspirations.map(inspirationObj => inspirationObj.id)
+        const showingPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id)
+        if (inspirationIds.includes(showingPost.id)){
+           return <div><div>Ready to submit your inspired Art?</div><Link to={ {pathname: `/home/newinspiredpost`, state: {post_id: this.props.showPost.id} } } ><Button>Submit my work</Button></Link><Button onClick={this.handleNoLongerInspiredClick}>I'm no longer inspired</Button></div> 
+        } else {
+            return <Button onClick={this.feelingInspiredClick}>Feeling Inspired?</Button>
+        }
     }
 
     feelingInspiredClick = () => {
@@ -123,10 +199,32 @@ class ShowPost extends React.Component {
         .then(resp => resp.json())
         .then(new_user_post => {
             console.log(new_user_post)
+            this.sendInspireFetch()
             this.props.addInspirationToUser(this.props.showPost)
-            this.props.addInspiredUserToPost(this.props.user, this.props.showPost.id)
             alert('This piece has been added to those that inspire you')
         })
+    }
+
+    handleNoLongerInspiredClick = () => {
+        console.log("no longer inspired click")
+        const thisUserPost = this.props.userPosts.find(userPostObj => {
+           return userPostObj.user_id === this.props.user.id && userPostObj.post_id === this.props.showPost.id
+        })
+        const reqObj = {
+            method: 'DELETE', 
+        }
+        fetch(`http://localhost:3000/user_posts/${thisUserPost.id}`, reqObj)
+        .then(resp => resp.json())
+        .then(() => {
+            this.sendInspireFetch()
+            this.props.deleteInspirationFromUser(this.props.showPost.id)
+            alert('This piece has been removed from your inspirations')
+        })
+    }
+
+    renderSeeProfileBtn = () => {
+        const displayUser = this.props.allUsers.find(userObj => userObj.id === this.props.showPost.user.id)
+        return <Button onClick={() => this.props.selectUser(displayUser)}><Link to={`/home/showuser/${displayUser.id}`}>See Profile</Link></Button>
     }
 
     render(){
@@ -146,8 +244,8 @@ class ShowPost extends React.Component {
                             </Card.Content>
                             
                             <Card.Content extra>
-                                {/* {this.followBtn()} */}
-                                <Button onClick={() => this.props.selectUser(this.props.showPost.user)}><Link to={`/home/showuser/${this.props.showPost.user.id}`}>See Profile</Link></Button>
+                                {this.followBtn()}
+                                {this.renderSeeProfileBtn()}
                             </Card.Content>
                             </Card>
                         </Grid.Column>
@@ -176,12 +274,7 @@ class ShowPost extends React.Component {
                         <Card>
                             <Card.Content extra>
                                 {/* {this.followBtn()} */}
-                                {/* THIS BUTTON BELOW SHOULD BE HIDDEN IF A USER IS ALREADY INSPIRED BY THIS WORK AND SHOULD SHOW IF THEY HAVEN'T*/}
-                                <Button onClick={this.feelingInspiredClick}>Feeling Inspired?</Button>
-                                {/* THIS BUTTON BELOW SHOULD BE RENDERED IF THE USER IS ALREADY INSPIRED BY THIS WORK*/}
-                                Ready to submit your inspired Art?
-                                {/* Link to new work page (may need to create another new work page that upon submission adds the post to the inspiring post's posts and deletes the post_user inspiration instance between the two... or not) */}
-                                <Button>Submit my work</Button> 
+                                {this.renderFeelingInspiredBtns()}
                             </Card.Content>
                             </Card>
                         </Grid.Column>
@@ -195,7 +288,8 @@ class ShowPost extends React.Component {
 const mapStateToProps = (state) => {
     return { 
       allPosts: state.allPosts,
-      user: state.user, 
+      user: state.user,
+      allUsers: state.allUsers,  
       showPost: state.showPost,
       userPosts: state.userPosts
     }
@@ -203,15 +297,19 @@ const mapStateToProps = (state) => {
   
 const mapDispatchToProps = {
 //    selectPost,
-    deletePostInCertainUser,
-    deleteShowUserPost,
-    deletePost,
-    deleteUserPost,
+    // resetShowPost,
+
+    deleteUsersPost,
     selectUser, 
     addFollowingToUser,
-    addFollowerToOtherUser, 
+    // addFollowerToOtherUser, 
     addInspirationToUser,
-    addInspiredUserToPost,  
+    deleteInspirationFromUser,
+    // addInspiredUserToPost, 
+    fetchPostsSuccess,
+    fetchAllUsersSuccess,
+    fetchAllUserPostsSuccess,
+    fetchFollowsSuccess
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShowPost);

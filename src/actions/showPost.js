@@ -4,3 +4,9 @@ export const selectPost = (postObj) => {
         activePost: postObj
     }
 }
+
+export const resetShowPost = () => {
+    return {
+        type: 'RESET_SHOW_POST',
+    }
+}

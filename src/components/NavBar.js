@@ -24,12 +24,13 @@ class NavBar extends Component {
       <div style={{backgroundColor: ''}}>
         <Menu pointing secondary>
         <Menu.Item onClick={() => this.props.selectUser(this.props.user)}><Link to={`/home/showuser/${this.props.user.id}`}>{this.props.user.username}</Link></Menu.Item>
+        <Menu.Item position=''><Link to={`/home`}>Logo</Link></Menu.Item>
           <Menu.Menu position='right'>
             <Dropdown item text='Options'>
               <Dropdown.Menu>
                 <Link to='/home'><Dropdown.Item>Wall</Dropdown.Item></Link>
                 <Link to='/home/newpost'><Dropdown.Item>Post New Art</Dropdown.Item></Link>
-                {/* <Link to={`/showuser/${this.props.user.id}`}><Dropdown.Item>My Profile</Dropdown.Item></Link> */}
+                {/* <Link to={`/home/showuser/${this.props.user.id}`}><Dropdown.Item>My Profile</Dropdown.Item></Link> */}
                 <Link to={`/home/edituser/${this.props.user.id}`}><Dropdown.Item>Edit My Profile</Dropdown.Item></Link>
                 <Link to='/'><Dropdown.Item onClick={this.handleClick}>Logout</Dropdown.Item></Link>
               </Dropdown.Menu>

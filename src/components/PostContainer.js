@@ -44,7 +44,7 @@ class PostContainer extends React.Component {
       case 'All':
         // PROVIDE A FUNCTION THAT FILTERS OUT POSTS THAT HAVE NOT INSPIRED THE USER
         return postsArray
-      case 'Works that Inspire Me':
+      case 'Inspired Me':
         //PERHAPS RUN A FUNCTION THAT FILTERS OUT THE HAVE INSPIRED THE USER
         const inspirationId = this.props.user.inspirations.map(postObj => postObj.id)
         return this.props.allPosts.filter(postObj => inspirationId.includes(postObj.id))
@@ -54,26 +54,26 @@ class PostContainer extends React.Component {
   //ISSUE WITH NEWEST AND OLDEST NOT SORTING PROPERLY
   tabDisplay = (postsArray) => {
     const Posts = this.findPosts(postsArray)
+    console.log(Posts)
     if (this.state.sortBy === 'Sort'){
       return this.renderPosts(Posts)
     } else if (this.state.sortBy === 'Newest'){
-      const newestPosts = Posts.sort((a, b) => b.updated_at - a.updated_at).reverse()
+      const newestPosts = Posts.sort((a, b) => b.updated_at - a.updated_at)
       return this.renderPosts(newestPosts)
     } else if (this.state.sortBy === 'Oldest'){
-      const oldestPosts = Posts.sort((a, b) => b.updated_at - a.updated_at)
+      const oldestPosts = Posts.sort((a, b) => b.updated_at - a.updated_at).reverse()
       return this.renderPosts(oldestPosts)
-    } else if (this.state.sortBy === 'Most Liked'){
-      const mostLikedPosts = Posts.sort((a, b) => b.likes - a.likes)
-      return this.renderPosts(mostLikedPosts)
-    } else if (this.state.sortBy === 'Least Liked'){
-      const leastLikedPosts = Posts.sort((a, b) => b.likes - a.likes).reverse()
-      return this.renderPosts(leastLikedPosts)
+    } else if (this.state.sortBy === 'Inspired Most'){
+      const mostInspiredPosts = Posts.sort((a, b) => b.posts.length - a.posts.length)
+      return this.renderPosts(mostInspiredPosts)
+    } else if (this.state.sortBy === 'Inspired Least'){
+      const leastInspiredPosts = Posts.sort((a, b) => b.posts.length - a.posts.length).reverse()
+      return this.renderPosts(leastInspiredPosts)
     }
   } 
   
   render() {
     const { activeItem } = this.state
-    // *******NEEDS TO INCLUDE TAGS********
     const searchedPosts = this.props.allPosts.filter(postObj => {
       const fullName = postObj.user.first_name + " " + postObj.user.last_name
       return (postObj.user.first_name.includes(this.state.searchQuery))||(postObj.user.last_name.includes(this.state.searchQuery))||(postObj.title.includes(this.state.searchQuery))||(fullName.includes(this.state.searchQuery)) 
@@ -90,8 +90,8 @@ class PostContainer extends React.Component {
             style={{backgroundColor: ''}}
           />
           <Menu.Item
-            name='Works that Inspire Me'
-            active={activeItem === 'Works that Inspire Me'}
+            name='Inspired Me'
+            active={activeItem === 'Inspired Me'}
             onClick={this.handleItemClick}
             style={{backgroundColor: ''}}
           />
@@ -99,8 +99,8 @@ class PostContainer extends React.Component {
             <Dropdown.Menu>
               <Dropdown.Item name='Newest' onClick={this.handleSortClick}>Newest</Dropdown.Item>
               <Dropdown.Item name='Oldest' onClick={this.handleSortClick}>Oldest</Dropdown.Item>
-              <Dropdown.Item name='Most Liked' onClick={this.handleSortClick}>Most Liked</Dropdown.Item>
-              <Dropdown.Item name='Least Liked' onClick={this.handleSortClick}>Least Liked</Dropdown.Item>
+              <Dropdown.Item name='Inspired Most' onClick={this.handleSortClick}>Inspired Most</Dropdown.Item>
+              <Dropdown.Item name='Inspired Least' onClick={this.handleSortClick}>Inspired Least</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
           <Menu.Menu position='right'>
@@ -108,7 +108,7 @@ class PostContainer extends React.Component {
               <Input
                 transparent
                 icon={{ name: 'search', link: true }}
-                placeholder='by Title, Artist, or Tag'
+                placeholder='Search by Title or Artist'
                 value={this.state.searchQuery}
                 onChange={this.handleSearchChange}
               />
@@ -117,7 +117,7 @@ class PostContainer extends React.Component {
         </Menu>
 
         <Segment attached='bottom'>
-          {this.tabDisplay(searchedPosts)}
+          {this.tabDisplay(searchedPosts.reverse())}
         </Segment>
         </Grid.Column>
       </Grid>

@@ -10,6 +10,7 @@ import NavBar from "./NavBar.js"
 import PostContainer from "./PostContainer.js"
 import ShowPost from './ShowPost.js';
 import NewPost from './NewPost.js';
+import NewInspiredPost from './NewInspiredPost.js';
 import ShowUser from './ShowUser.js';
 import EditUser from './EditUser.js';
 import ShowFollowContainer from './ShowFollowContainer.js'
@@ -67,6 +68,7 @@ class Home extends React.Component {
               <Route exact path={'/home'} component={PostContainer}/>
               <Route exact path={'/home/showpost/:id'} component={ShowPost} />
               <Route exact path={'/home/newpost'} component={NewPost} />
+              <Route exact path={'/home/newinspiredpost'} component={NewInspiredPost} />
               <Route exact path={'/home/showuser/:id'} component={ShowUser} />
               <Route exact path={'/home/edituser/:id'} component={EditUser} />
               <Route exact path={'/home/showfollow/:id'} component={ShowFollowContainer} />
