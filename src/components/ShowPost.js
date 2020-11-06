@@ -3,9 +3,7 @@ import { connect } from 'react-redux'
 import { Segment, Image, Card, Icon, Button, Grid } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { addFollowingToUser } from '../actions/user'
-// import { addFollowerToOtherUser } from '../actions/allUsers'
 import { addInspirationToUser } from '../actions/user'
-// import { addInspiredUserToPost } from '../actions/allPosts'
 import { fetchPostsSuccess } from '../actions/allPosts'
 import { fetchAllUsersSuccess } from '../actions/allUsers'
 import { fetchAllUserPostsSuccess } from '../actions/userPosts'
@@ -15,6 +13,7 @@ import { deleteInspirationFromUser } from '../actions/user'
 import PostTile from "./PostTile.js"
 import { selectPost } from '../actions/showPost'
 import { selectUser } from '../actions/showUser'
+import ReactPlayer from 'react-player'
 
 
 class ShowPost extends React.Component { 
@@ -227,6 +226,18 @@ class ShowPost extends React.Component {
         return <Button onClick={() => this.props.selectUser(displayUser)}><Link to={`/home/showuser/${displayUser.id}`}>See Profile</Link></Button>
     }
 
+    renderMedia = (postInstance) => {
+        if(postInstance.category === 'Video'){
+            return <ReactPlayer url={postInstance.link_url} controls={true} width={500}/>
+        } else if (postInstance.category === 'Audio'){
+            return <ReactPlayer url={postInstance.link_url} controls={false} width={500} height={150} textAlign='center'/>
+        } else if (postInstance.category === 'Image'){
+            return <Image src={postInstance.link_url} />
+        } else if (postInstance.category === 'Writing'){
+            return "Writing goes here"
+        } 
+    }
+
     render(){
         return(
             <div>
@@ -236,15 +247,12 @@ class ShowPost extends React.Component {
                             <Card>
                             <Image src={this.props.showPost.user.image_url} wrapped ui={false}/>
                             <Card.Content>
-                            <Card.Header>{this.props.showPost.user.first_name} {this.props.showPost.user.last_name}</Card.Header>
-                            <Card.Meta>{this.props.showPost.user.location}</Card.Meta>
-                            <Card.Description>
-                                    {this.props.showPost.user.bio}
-                            </Card.Description>
+                                <Card.Description>Artist</Card.Description>
+                                <Card.Header>{this.props.showPost.user.first_name} {this.props.showPost.user.last_name}</Card.Header>
+                                <Card.Meta>{this.props.showPost.user.location}</Card.Meta>
                             </Card.Content>
-                            
                             <Card.Content extra>
-                                {this.followBtn()}
+                                {this.props.user.id !== this.props.showPost.user.id ? this.followBtn() : null}
                                 {this.renderSeeProfileBtn()}
                             </Card.Content>
                             </Card>
@@ -253,10 +261,10 @@ class ShowPost extends React.Component {
                         <Segment.Group>
                             <Segment>{this.props.showPost.title}</Segment>
                             <Segment.Group>
-                                <Segment>ShowPost Media goes here</Segment>
+                            <Segment>{this.renderMedia(this.props.showPost)}ShowPost Media goes here</Segment>
                             </Segment.Group>
                             <Segment.Group>
-                                <Segment>ShowPost Information goes here</Segment>
+                            <Segment>{this.props.showPost.description} ShowPost Information goes here</Segment>
                             </Segment.Group>
                             {this.props.showPost.user.id === this.props.user.id ? <Button onClick={() => this.handleDelClick(this.props.showPost.id)}>Delete this Post</Button> : null }
                             <Segment>
@@ -273,7 +281,6 @@ class ShowPost extends React.Component {
                         <Grid.Column width={3}>
                         <Card>
                             <Card.Content extra>
-                                {/* {this.followBtn()} */}
                                 {this.renderFeelingInspiredBtns()}
                             </Card.Content>
                             </Card>
@@ -296,16 +303,11 @@ const mapStateToProps = (state) => {
   }
   
 const mapDispatchToProps = {
-//    selectPost,
-    // resetShowPost,
-
     deleteUsersPost,
     selectUser, 
     addFollowingToUser,
-    // addFollowerToOtherUser, 
     addInspirationToUser,
     deleteInspirationFromUser,
-    // addInspiredUserToPost, 
     fetchPostsSuccess,
     fetchAllUsersSuccess,
     fetchAllUserPostsSuccess,

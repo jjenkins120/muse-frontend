@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Icon } from 'semantic-ui-react'
+import { Menu, Dropdown, Icon, Image } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { userLogout } from '../actions/user'
@@ -16,17 +16,16 @@ class NavBar extends Component {
 
   handleUserClick = () => {
     this.props.selectUser(this.props.user)
-    // this.props.history.push(`/home/showuser/${this.props.user.id}`)
   }
 
   render() {
     return (
       <div style={{backgroundColor: ''}}>
         <Menu pointing secondary>
-        <Menu.Item onClick={() => this.props.selectUser(this.props.user)}><Link to={`/home/showuser/${this.props.user.id}`}>{this.props.user.username}</Link></Menu.Item>
-        <Menu.Item position=''><Link to={`/home`}>Logo</Link></Menu.Item>
+        <Menu.Item onClick={() => this.props.selectUser(this.props.user)}><Link to={`/home/showuser/${this.props.user.id}`}><Image src={this.props.user.image_url} circular size='mini'/></Link></Menu.Item>
+        <Menu.Item ><Link to={`/home`}>Logo</Link></Menu.Item>
           <Menu.Menu position='right'>
-            <Dropdown item text='Options'>
+            <Dropdown item style={{ marginBottom: '8px'}}>
               <Dropdown.Menu>
                 <Link to='/home'><Dropdown.Item>Wall</Dropdown.Item></Link>
                 <Link to='/home/newpost'><Dropdown.Item>Post New Art</Dropdown.Item></Link>

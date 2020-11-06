@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Grid, Image, Segment, Button } from 'semantic-ui-react'
+import { Grid, Image, Segment, Button, Header, Label} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { selectUser } from '../actions/showUser'
 import { selectPost } from '../actions/showPost'
@@ -9,11 +9,7 @@ import { fetchFollowsSuccess } from '../actions/follows'
 import { fetchAllUsersSuccess } from '../actions/allUsers'
 import { addFollowingToUser } from '../actions/user'
 import { deleteFollowingFromUser } from '../actions/user'
-import showUser from '../reducers/showUser'
-// import { deleteFollow } from '../actions/follows'
-// import { deleteUserPost } from '../actions/userPosts'
-// import { deleteUser } from '../actions/allUsers'
-
+import PostTile from './PostTile'
 
 class ShowUser extends React.Component {
 
@@ -48,15 +44,9 @@ class ShowUser extends React.Component {
         .then(newFollow => {
             console.log(newFollow)
             this.sendNewFolFetch()
-            // this.props.addFollowerToShowUser(this.props.user)
             this.props.addFollowingToUser(this.props.showUser)
             alert(`You are now following ${this.props.showUser.first_name} ${this.props.showUser.last_name}`)
-            // this.props.addFollowerToOtherUser(this.props.user, this.props.showPost.user.id)
-
         })
-        //update backend follows
-        //send fetch for allUsers
-        //send fetch for follows
     }
 
     handleUnfollowClick = () => {
@@ -72,16 +62,9 @@ class ShowUser extends React.Component {
         .then(resp => resp.json())
         .then(() => {
             this.sendNewFolFetch()
-            // this.props.addFollowerToShowUser(this.props.user)
             this.props.deleteFollowingFromUser(this.props.showUser.id)
             alert(`You are no longer following ${this.props.showUser.first_name} ${this.props.showUser.last_name}`)
-            // this.props.addFollowerToOtherUser(this.props.user, this.props.showPost.user.id)
-
         })
-        //update backend follows
-        //send fetch for allUsers
-        //send fetch for follows
-        //update frontend showUser
     }
 
     handlePostClick = (id) => {
@@ -209,7 +192,7 @@ class ShowUser extends React.Component {
 
     renderPosts = (posts) => {
         return posts.map(postObj =>{
-            return <Segment onClick={() => this.handlePostClick(postObj.id)}><Link to={`/home/showpost/${postObj.id}`}>{postObj.title}</Link></Segment>
+            return <Segment style={{backgroundColor: 'white'}}><PostTile post={postObj}/></Segment>
     })
     }
 
@@ -230,7 +213,7 @@ class ShowUser extends React.Component {
     renderFollowerInfo = () => {
         const followUser = this.props.allUsers.find(userObj => userObj.id === this.props.showUser.id)
        return <Segment> 
-        Followers: {followUser.followers.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Followers'} } } >{followUser.followers.length}</Link>}
+        Followers: {followUser.followers.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Followers'} } } ><Button> Followers <Label floating>{followUser.followers.length}</Label></Button></Link>}
         <br/>                    
         Following: {followUser.following.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Following'} } } >{followUser.following.length}</Link>}
         </Segment>
@@ -239,43 +222,46 @@ class ShowUser extends React.Component {
     render(){
         return (
             <div>
-                <Grid>
+                <Grid columns={3}>
                     <Grid.Row>
-                        <Grid.Column width={3}>
+                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}}>
                             {this.props.showUser.bio}
+                            {/* </Grid.Column> */}
+                            {/* <Grid.Column width={5}> */}
+                            {/* </Segment> */}
+
                         </Grid.Column>
-                        <Grid.Column width={10}>
-                            <Grid.Column width={5}>
-                            <Image src={this.props.showUser.image_url} size='medium' circular />
-                            </Grid.Column>
-                            <Grid.Column width={5}>
+                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}}>
+                            {/* <Grid.Column width={5}> */}
+                            <Segment style={{ padding: '50px'}} >
+                            <Image src={this.props.showUser.image_url} size='medium' circular style={{ boxShadow: '1px 1px grey' }}/>
+                            {/* </Grid.Column> */}
+                            {/* <Grid.Column width={5}> */}
                             <br/>
-                            {this.props.showUser.first_name} {this.props.showUser.last_name}
-                            <br/>
+                            <Header>{this.props.showUser.first_name} {this.props.showUser.last_name}</Header>
                             {this.props.showUser.location}
-                            <br/>
-
-                            {this.renderBtns()}
-                            </Grid.Column>
+                            {/* </Segment> */}
+                            </Segment>
                         </Grid.Column>
-                        <Grid.Column width={3}>
-
+                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}}>
                         {this.renderFollowerInfo()}
-                        
-                            
-                            
+                        {this.renderBtns()}
                         </Grid.Column>
                     </Grid.Row>
+                </Grid>
+                <Grid verticalAlign='left'>
                     <Grid.Row>
-                        <Grid.Column>
+                        <Grid.Column width={7} >
                             My Artwork
-                            {this.renderPosts(this.props.showUser.posts)}
+                            {this.renderPosts(this.props.showUser.posts).reverse()}
                         </Grid.Column>    
-                    </Grid.Row>    
-                    <Grid.Row>
-                        <Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Grid verticalAlign='right'>  
+                    <Grid.Row>    
+                        <Grid.Column width={7}>
                             Artwork that has inspired me
-                            {this.renderPosts(this.props.showUser.inspirations)}
+                            {this.renderPosts(this.props.showUser.inspirations).reverse()}
                         </Grid.Column>    
                     </Grid.Row>    
                 </Grid>

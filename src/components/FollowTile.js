@@ -5,7 +5,7 @@ import { Card, Image, Icon, Segment, Button } from 'semantic-ui-react'
 import { selectUser } from '../actions/showUser'
 
 
-class PostTile extends React.Component {
+class FollowTile extends React.Component {
     
     
     displayFollowing = () => {
@@ -47,4 +47,4 @@ const mapStateToProps = (state) => {
     selectUser
   }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostTile);
+export default connect(mapStateToProps, mapDispatchToProps)(FollowTile);

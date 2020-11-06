@@ -11,7 +11,6 @@ class ShowFollowContainer extends React.Component {
         activeItem: this.props.location.state.activeItem,
         searchQuery: '', 
         sortBy: 'Sort',
-        // triggered: this.props.follow
     }
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
@@ -26,37 +25,16 @@ class ShowFollowContainer extends React.Component {
         })
     }
 
-//     findPosts = (postsArray) => {
-//     switch(this.state.activeItem){
-//       case 'All':
-//         // PROVIDE A FUNCTION THAT FILTERS OUT POSTS THAT HAVE NOT INSPIRED THE USER
-//         return postsArray
-//       case 'Inspiring Works':
-//         //PERHAPS RUN A FUNCTION THAT FILTERS OUT THE HAVE INSPIRED THE USER
-//         const inspirationId = this.props.user.inspirations.map(postObj => postObj.id)
-//         return this.props.allPosts.filter(postObj => inspirationId.includes(postObj.id))
-//     }
-//   }
-
-  //ISSUE WITH NEWEST AND OLDEST NOT SORTING PROPERLY
-  tabDisplay = (followArray) => {
-    // const Follow = this.findPosts(postsArray)
-    console.log(followArray)
-    if (this.state.sortBy === 'Sort'){
-      return this.renderFollows(followArray)
-//     } else if (this.state.sortBy === 'Newest'){
-//       const newestPosts = followArray.sort((a, b) => b.updated_at - a.updated_at).reverse()
-//       return this.renderFollows(newestPosts)
-//     } else if (this.state.sortBy === 'Oldest'){
-//       const oldestPosts = followArray.sort((a, b) => b.updated_at - a.updated_at)
-//       return this.renderFollows(oldestPosts)
-    } else if (this.state.sortBy === 'Most Pieces'){
-      const mostPosts = followArray.sort((a, b) => b.posts.length - a.posts.length)
-      return this.renderFollows(mostPosts)
-    } else if (this.state.sortBy === 'Fewest Pieces'){
-      const leastPosts = followArray.sort((a, b) => b.posts.length - a.posts.length).reverse()
-      return this.renderFollows(leastPosts)
-    }
+    tabDisplay = (followArray) => {
+        if (this.state.sortBy === 'Sort'){
+        return this.renderFollows(followArray)
+        } else if (this.state.sortBy === 'Most Pieces'){
+        const mostPosts = followArray.sort((a, b) => b.posts.length - a.posts.length)
+        return this.renderFollows(mostPosts)
+        } else if (this.state.sortBy === 'Fewest Pieces'){
+        const leastPosts = followArray.sort((a, b) => b.posts.length - a.posts.length).reverse()
+        return this.renderFollows(leastPosts)
+        }
     } 
 
     render() {
@@ -93,8 +71,6 @@ class ShowFollowContainer extends React.Component {
                 />
                 <Dropdown item text={this.state.sortBy}>
                 <Dropdown.Menu>
-                    {/* <Dropdown.Item name='Newest' onClick={this.handleSortClick}>Newest</Dropdown.Item>
-                    <Dropdown.Item name='Oldest' onClick={this.handleSortClick}>Oldest</Dropdown.Item> */}
                     <Dropdown.Item name='Most Pieces' onClick={this.handleSortClick}>Most Pieces</Dropdown.Item>
                     <Dropdown.Item name='Fewest Pieces' onClick={this.handleSortClick}>Fewest Pieces</Dropdown.Item>
                 </Dropdown.Menu>
@@ -111,7 +87,6 @@ class ShowFollowContainer extends React.Component {
                 </Menu.Item>
                 </Menu.Menu>
             </Menu>
-    
             <Segment attached='bottom'>
                 { this.state.activeItem === 'Followers' ? this.tabDisplay(searchedFollowers) : this.tabDisplay(searchedFollowing)}
             </Segment>

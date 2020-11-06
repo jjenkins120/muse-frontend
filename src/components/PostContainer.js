@@ -1,5 +1,4 @@
 import React from 'react'
-// import { fetchPostsSuccess } from '../actions/allPosts'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Menu, Input, Segment, Grid, Dropdown} from 'semantic-ui-react'
@@ -14,16 +13,6 @@ class PostContainer extends React.Component {
     sortBy: 'Sort' 
   }
   
-  // componentDidMount(){
-  //   fetch('http://localhost:3000/posts')
-  //     .then(resp => resp.json())
-  //     .then(allPosts => {
-  //         this.props.fetchPostsSuccess(allPosts)
-  //     })
-  // }
-
-  
-
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
   
   handleSortClick = (e, { name }) => this.setState({ sortBy: name })
@@ -32,26 +21,20 @@ class PostContainer extends React.Component {
 
   renderPosts = (postsArray) => {
     return postsArray.map(postObj => {
-      return <Segment style={{backgroundColor: '#F0F8FF'}}><PostTile post={postObj}/></Segment>
+      return <Segment style={{backgroundColor: 'white'}}><PostTile post={postObj}/></Segment>
     })
   }
 
-  
-
-  
   findPosts = (postsArray) => {
     switch(this.state.activeItem){
       case 'All':
-        // PROVIDE A FUNCTION THAT FILTERS OUT POSTS THAT HAVE NOT INSPIRED THE USER
         return postsArray
       case 'Inspired Me':
-        //PERHAPS RUN A FUNCTION THAT FILTERS OUT THE HAVE INSPIRED THE USER
         const inspirationId = this.props.user.inspirations.map(postObj => postObj.id)
-        return this.props.allPosts.filter(postObj => inspirationId.includes(postObj.id))
+        return postsArray.filter(postObj => inspirationId.includes(postObj.id))
     }
   }
 
-  //ISSUE WITH NEWEST AND OLDEST NOT SORTING PROPERLY
   tabDisplay = (postsArray) => {
     const Posts = this.findPosts(postsArray)
     console.log(Posts)
@@ -82,7 +65,7 @@ class PostContainer extends React.Component {
       <div>
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='top'>
         <Grid.Column style={{ maxWidth: 700, margin: 50 }} >
-        <Menu attached='top' tabular>
+        <Menu attached='top' tabular >
           <Menu.Item
             name='All'
             active={activeItem === 'All'}
@@ -132,9 +115,5 @@ const mapStatetoProps = (state) => {
     allPosts: state.allPosts
   }
 }
-
-// const mapDispatchToProps = {
-//   fetchPostsSuccess
-// }
 
 export default connect(mapStatetoProps, null)(PostContainer);
