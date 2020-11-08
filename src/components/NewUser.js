@@ -3,7 +3,8 @@ import { Form, Button, Grid } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { newUser, fetchUserSuccess } from '../actions/user'
-
+import toaster from 'toasted-notes'
+import "toasted-notes/src/styles.css"; 
 
 class NewUser extends React.Component {
     
@@ -56,7 +57,7 @@ class NewUser extends React.Component {
             localStorage.setItem('app_token', user.token)  
             this.props.fetchUserSuccess(user)
             this.props.history.push('/home')
-            alert(`Thanks for signing up!`)
+           toaster.notify(`Thanks for signing up!`)
         })
     }
 
@@ -64,35 +65,35 @@ class NewUser extends React.Component {
       return (
         <div>
             <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
-                <Grid.Column style={{ maxWidth: 600, margin: 50 }} >
+                <Grid.Column style={{ maxWidth: 800, margin: 50 }} >
                     <Form onSubmit={this.handleSubmit}>
                     <Form.Group widths='equal'>
-                        <Form.Input fluid label='Username' name='username' value={this.state.username} onChange={this.handleChange}/>
+                        <Form.Input fluid name='username' placeholder='Username' value={this.state.username} onChange={this.handleChange}/>
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Input label='Password' name='password' type='password' value={this.state.password} onChange={this.handleChange}/>
+                        <Form.Input name='password' placeholder='Password' type='password' value={this.state.password} onChange={this.handleChange}/>
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Input label='First Name' name='first_name' value={this.state.first_name} onChange={this.handleChange}/>
-                        <Form.Input label='Last Name' name='last_name' value={this.state.last_name} onChange={this.handleChange}/>
+                        <Form.Input name='first_name' placeholder='First Name' value={this.state.first_name} onChange={this.handleChange}/>
+                        <Form.Input name='last_name' placeholder='Last Name' value={this.state.last_name} onChange={this.handleChange}/>
                     </Form.Group>    
                     <Form.Group widths='equal'>
-                        <Form.Input label='Email' name='email' value={this.state.email} onChange={this.handleChange}/>
+                        <Form.Input name='email' placeholder='Email' value={this.state.email} onChange={this.handleChange}/>
                     </Form.Group>    
                     <Form.Group widths='equal'>
-                        <Form.TextArea label='Bio' name='bio' value={this.state.bio} onChange={this.handleChange}/>
+                        <Form.TextArea name='bio' placeholder='Bio' value={this.state.bio} onChange={this.handleChange}/>
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Input label='Location' name='location' value={this.state.location} onChange={this.handleChange}/>
+                        <Form.Input name='location' placeholder='Location' value={this.state.location} onChange={this.handleChange}/>
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Input label='Profile Image URL' name='image_url' value={this.state.image_url} onChange={this.handleChange}/>
+                        <Form.Input name='image_url' placeholder='Profile Image URL' value={this.state.image_url} onChange={this.handleChange}/>
                     </Form.Group>
-                    <Button.Group>
-                        <Form.Button primary>Submit</Form.Button>
-                            <Button.Or />
-                        <Link to={`/`}><Button>Back</Button></Link>
-                        </Button.Group>
+                    <Button.Group style={{ margin: 20 }}>
+                        <Form.Button style={{backgroundColor: '#FDD000', color: 'white', fontVariant: 'small-caps'}}>Submit</Form.Button>
+                    <Button.Or />
+                        <Link to={`/`}><Button style={{ color: "white", fontVariant: 'small-caps'}}>Back</Button></Link>
+                    </Button.Group>    
                     </Form>
                 </Grid.Column>
             </Grid>     

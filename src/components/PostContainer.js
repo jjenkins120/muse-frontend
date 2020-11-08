@@ -64,21 +64,21 @@ class PostContainer extends React.Component {
     return (
       <div>
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='top'>
-        <Grid.Column style={{ maxWidth: 700, margin: 50 }} >
-        <Menu attached='top' tabular >
+        <Grid.Column style={{ width: 900, marginTop: 50 }} >
+        <Menu style={{backgroundColor: '#36454F'}}>
           <Menu.Item
             name='All'
             active={activeItem === 'All'}
             onClick={this.handleItemClick}
-            style={{backgroundColor: ''}}
+            style={{color: 'white'}}
           />
           <Menu.Item
             name='Inspired Me'
             active={activeItem === 'Inspired Me'}
             onClick={this.handleItemClick}
-            style={{backgroundColor: ''}}
+            style={{ color: 'white'}}
           />
-          <Dropdown item text={this.state.sortBy}>
+          <Dropdown item text={this.state.sortBy} style={{color: 'white'}}>
             <Dropdown.Menu>
               <Dropdown.Item name='Newest' onClick={this.handleSortClick}>Newest</Dropdown.Item>
               <Dropdown.Item name='Oldest' onClick={this.handleSortClick}>Oldest</Dropdown.Item>
@@ -90,8 +90,8 @@ class PostContainer extends React.Component {
             <Menu.Item>
               <Input
                 transparent
-                icon={{ name: 'search', link: true }}
-                placeholder='Search by Title or Artist'
+                icon={{ name: 'search'}}
+                placeholder='Search by Title / Artist...'
                 value={this.state.searchQuery}
                 onChange={this.handleSearchChange}
               />
@@ -99,9 +99,9 @@ class PostContainer extends React.Component {
           </Menu.Menu>
         </Menu>
 
-        <Segment attached='bottom'>
+        {/* <Segment attached='bottom'> */}
           {this.tabDisplay(searchedPosts.reverse())}
-        </Segment>
+        {/* </Segment> */}
         </Grid.Column>
       </Grid>
       </div>

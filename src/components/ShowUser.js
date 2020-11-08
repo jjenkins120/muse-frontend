@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Grid, Image, Segment, Button, Header, Label} from 'semantic-ui-react'
+import { Grid, Image, Segment, Button, Header, Label, Card, Icon, Divider} from 'semantic-ui-react'
+import toaster from "toasted-notes";
+import "toasted-notes/src/styles.css"; 
 import { Link } from 'react-router-dom'
 import { selectUser } from '../actions/showUser'
 import { selectPost } from '../actions/showPost'
@@ -45,7 +47,7 @@ class ShowUser extends React.Component {
             console.log(newFollow)
             this.sendNewFolFetch()
             this.props.addFollowingToUser(this.props.showUser)
-            alert(`You are now following ${this.props.showUser.first_name} ${this.props.showUser.last_name}`)
+            toaster.notify(`You are now following ${this.props.showUser.first_name} ${this.props.showUser.last_name}`)
         })
     }
 
@@ -63,7 +65,7 @@ class ShowUser extends React.Component {
         .then(() => {
             this.sendNewFolFetch()
             this.props.deleteFollowingFromUser(this.props.showUser.id)
-            alert(`You are no longer following ${this.props.showUser.first_name} ${this.props.showUser.last_name}`)
+            toaster.notify(`You are no longer following ${this.props.showUser.first_name} ${this.props.showUser.last_name}`)
         })
     }
 
@@ -198,7 +200,7 @@ class ShowUser extends React.Component {
 
     renderBtns = () => {
         if(this.props.showUser.id === this.props.user.id){
-            return <div><Link to={`/home/edituser/${this.props.user.id}`}><Button>Edit My Profile</Button></Link><Button onClick={this.handleDelClick}>Delete My Profile</Button></div>
+            return <div><Link to={`/home/edituser/${this.props.user.id}`}><Card style={{left:'9%', backgroundColor:'#36454F', color:'white'}}>Edit My Profile</Card></Link><Card onClick={this.handleDelClick} style={{left:'9%', backgroundColor:'#36454F', color:'white', marginBottom:'10px'}}>Delete My Profile</Card></div>
         } else {
             return this.renderFollowBtns()
         }
@@ -207,16 +209,16 @@ class ShowUser extends React.Component {
     renderFollowBtns = () => {
         const showingUser = this.props.allUsers.find(userObj => userObj.id === this.props.showUser.id)
         const isFollowing = showingUser.followers.find(followObj => followObj.id === this.props.user.id)
-        return isFollowing ? <Button onClick={this.handleUnfollowClick}>Unfollow</Button> : <Button onClick={this.handleFollowClick}>Follow</Button>
+        return isFollowing ? <Card onClick={this.handleUnfollowClick} style={{left:'9%', backgroundColor:'#36454F', color:'white'}}>Unfollow</Card> : <Card onClick={this.handleFollowClick} style={{left:'9%', backgroundColor:'#36454F', color:'white'}}>Follow</Card>
     }
 
     renderFollowerInfo = () => {
         const followUser = this.props.allUsers.find(userObj => userObj.id === this.props.showUser.id)
-       return <Segment> 
-        Followers: {followUser.followers.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Followers'} } } ><Button> Followers <Label floating>{followUser.followers.length}</Label></Button></Link>}
+       return <div>
+        {followUser.followers.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Followers'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Followers  |  {followUser.followers.length}</Segment></Link>}
         <br/>                    
-        Following: {followUser.following.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Following'} } } >{followUser.following.length}</Link>}
-        </Segment>
+        {followUser.following.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Following'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Following | {followUser.following.length}</Segment></Link>}
+        </div>
     }
 
     render(){
@@ -224,46 +226,50 @@ class ShowUser extends React.Component {
             <div>
                 <Grid columns={3}>
                     <Grid.Row>
-                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}}>
-                            {this.props.showUser.bio}
-                            {/* </Grid.Column> */}
-                            {/* <Grid.Column width={5}> */}
-                            {/* </Segment> */}
-
+                        <Grid.Column width={4}>
                         </Grid.Column>
-                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}}>
-                            {/* <Grid.Column width={5}> */}
-                            <Segment style={{ padding: '50px'}} >
-                            <Image src={this.props.showUser.image_url} size='medium' circular style={{ boxShadow: '1px 1px grey' }}/>
-                            {/* </Grid.Column> */}
-                            {/* <Grid.Column width={5}> */}
-                            <br/>
-                            <Header>{this.props.showUser.first_name} {this.props.showUser.last_name}</Header>
-                            {this.props.showUser.location}
-                            {/* </Segment> */}
+                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}} width={8}>
+                            <Segment style={{ padding: '50px', boxShadow:'1px 1px 1px black',}} textAlign='centered'>
+                            <Grid columns={2} relaxed='very'>
+                            <Grid.Column>
+                                <Image src={this.props.showUser.image_url} size='medium' circular style={{left:'6%'}} textAlign='centered'/>
+                                <br/>
+                                <Header style={{fontWeight: '', fontSize: '50px' }}>{this.props.showUser.first_name} {this.props.showUser.last_name}</Header>
+                                {this.renderBtns()}
+                                <div>
+                                <Icon name='map marker alternate'/>{this.props.showUser.location}
+                                <br/>
+                                <Icon name='mail'/>{this.props.showUser.email}
+                                </div>
+                                <br/>
+                                {this.renderFollowerInfo()}
+                            </Grid.Column>
+                            <Grid.Column>   
+                                {this.props.showUser.bio}
+                            </Grid.Column>     
+                            </Grid> 
+                            <div class="ui divider vertical"></div> 
                             </Segment>
                         </Grid.Column>
-                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}}>
-                        {this.renderFollowerInfo()}
-                        {this.renderBtns()}
+                        <Grid.Column width={4}>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-                <Grid verticalAlign='left'>
+                <Grid verticalAlign='center'>
                     <Grid.Row>
                         <Grid.Column width={7} >
-                            My Artwork
+                            <Segment>
+                                <Header style={{fontWeight: '1', fontSize: '25px' }}>My Artwork</Header>
+                            </Segment>
                             {this.renderPosts(this.props.showUser.posts).reverse()}
                         </Grid.Column>    
-                    </Grid.Row>
-                </Grid>
-                <Grid verticalAlign='right'>  
-                    <Grid.Row>    
                         <Grid.Column width={7}>
-                            Artwork that has inspired me
+                            <Segment>
+                                <Header style={{fontWeight: '1', fontSize: '25px' }}>Artwork That Has Inspired Me</Header>
+                            </Segment>
                             {this.renderPosts(this.props.showUser.inspirations).reverse()}
                         </Grid.Column>    
-                    </Grid.Row>    
+                    </Grid.Row>
                 </Grid>
             </div>
         )

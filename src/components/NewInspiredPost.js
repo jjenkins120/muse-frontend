@@ -10,6 +10,8 @@ import { fetchPostsSuccess } from '../actions/allPosts'
 import { fetchAllUserPostsSuccess } from '../actions/userPosts'
 import { deleteInspirationFromUser } from '../actions/user'
 import PostTile from './PostTile.js'
+import toaster from 'toasted-notes'
+import "toasted-notes/src/styles.css"; 
 
 class NewInspiredPost extends React.Component {
 
@@ -86,21 +88,21 @@ class NewInspiredPost extends React.Component {
       .then(() => {
         this.sendNewPostFetch()
         this.props.deleteInspirationFromUser(this.props.showPost.id)
-        alert('New post added! Note: the inspired piece has been removed from your inspirations')
+        toaster.notify('New post added! Note: the inspired piece has been removed from your inspirations')
         this.props.history.push('/home')
       })
     }
   
     renderPostTile = () => {
         const renderPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id)
-        return <Segment style={{backgroundColor: '#F0F8FF'}}><PostTile post={renderPost}/></Segment>
+        return <Segment style={{backgroundColor: 'white', width: '800px'}}> This submission is inspired by <PostTile post={renderPost}/></Segment>
     }
 
     renderMedia = (link_url) => {
         if(this.state.category === 'Video'){
-            return <ReactPlayer url={link_url} controls={true} width={500} style={{borderStyle: 'solid', borderColor: 'white', boxShadow: '2px 2px 2px gray'}}/>
+            return <ReactPlayer url={link_url} controls={true} width={700} height={400} style={{borderStyle: 'solid', borderColor: 'white', marginLeft: '35px'}}/>
         } else if (this.state.category === 'Audio'){
-            return <ReactPlayer url={link_url} controls={false} width={500} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{borderStyle: 'solid', borderColor: 'white', boxShadow: '2px 2px 2px gray'}}/>
+            return <ReactPlayer url={link_url} controls={false} width={700} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{borderStyle: 'solid', borderColor: 'white', marginLeft: '35px'}}/>
         } else if (this.state.category === 'Image'){
             return <Image src={link_url} verticalAlign='centered'/>
         } else if (this.state.category === 'Writing'){
@@ -124,8 +126,6 @@ class NewInspiredPost extends React.Component {
         }
       }
 
-
-
     render(){
         const { value } = this.state
         const catOptions = [
@@ -137,7 +137,7 @@ class NewInspiredPost extends React.Component {
         return (
           <div>
               <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
-                <Grid.Column style={{ maxWidth: 600, margin: 50 }} >
+                <Grid.Column style={{ maxWidth: 800, margin: 50 }} >
                   <Form onSubmit={this.handleSubmit}>
                     <Form.Group widths='equal'>
                         <Form.Input fluid placeholder='Link Url' name='link_url' onChange={this.handleChange}/>
@@ -149,11 +149,11 @@ class NewInspiredPost extends React.Component {
                     <Form.Group inline>
                         {this.renderPostTile()}    
                     </Form.Group>
-                    <Button.Group>
-                      <Form.Button primary>Submit</Form.Button>
-                      <Button.Or />
-                      <Link to={`/home/showpost/${this.props.showPost.id}`}><Button style={{ color: "white"}}>Cancel</Button></Link>
-                    </Button.Group>
+                    <Button.Group style={{ margin: 20 }}>
+                        <Form.Button style={{backgroundColor: '#FDD000', color: 'white', fontVariant: 'small-caps'}}>Submit</Form.Button>
+                    <Button.Or />
+                        <Link to={`/home/showpost/${this.props.showPost.id}`}><Button style={{ color: "white", fontVariant: 'small-caps'}}>Cancel</Button></Link>
+                    </Button.Group>  
                   </Form>
                 </Grid.Column>
               </Grid >

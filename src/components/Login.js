@@ -1,15 +1,17 @@
 import React from 'react'
-import { Form, Grid, Header, Message, Segment, Icon, Image } from 'semantic-ui-react'
+import { Form, Grid, Header, Message, Segment, Icon, Image, Transition } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchUserSuccess } from '../actions/user'
+import muselogo from '../muse_logo.png'
+
 
 class Login extends React.Component {
 
   state = {
     username: '',
     password: '',
-    error: null
+    error: null,
   }
 
   handleChange = (e) => {
@@ -48,19 +50,19 @@ class Login extends React.Component {
       <div>
         <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
           <Grid.Column style={{ maxWidth: 450 }}>
-            {/* <Header as='h2' color='blue' textAlign='center'>
-            Redux <Icon name='file text outline' size='massive' style={{ marginLeft: 5}}/>Note 
-            </Header> */}
+            <Header>
+            </Header>
             { this.state.error && <h3 style={{ color: 'red'}}>{this.state.error}</h3> }
             <Form size='large' onSubmit={this.handleSubmit}>
               <Segment>
+                <Image src={muselogo} style={{ width: '300px', marginLeft: '45px', marginBottom: '25px' }}/>
                 <Form.Input fluid icon='user' iconPosition='left' placeholder='Username' name='username' onChange={this.handleChange}/>
                 <Form.Input fluid icon='lock' iconPosition='left' placeholder='Password' name='password' type='password' onChange={this.handleChange}/>
-                <Form.Button color='blue' fluid size='large'> Login </Form.Button>
+                <Form.Button fluid size='large' style={{fontVariant: 'small-caps', backgroundColor: '#FABF00'}}> Login </Form.Button>
               </Segment>
             </Form>
             <Message>
-              New to us? <Link to='/newuser'> Sign up</Link>.
+              New to us? <Link to='/newuser'style={{color:'#DC9B66'}}> Sign up</Link>.
             </Message>
           </Grid.Column>
         </Grid>

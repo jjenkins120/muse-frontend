@@ -8,7 +8,8 @@ import { addPost } from '../actions/allPosts'
 import { addPostToUser } from '../actions/user'
 import { fetchAllUsersSuccess } from '../actions/allUsers'
 import { fetchPostsSuccess } from '../actions/allPosts'
-
+import toaster from 'toasted-notes'
+import "toasted-notes/src/styles.css"; 
 
 class NewPost extends React.Component {
   state = {
@@ -63,7 +64,7 @@ class NewPost extends React.Component {
       .then(newPost => {
         this.sendNewPostFetch()
         this.props.addPostToUser(newPost)
-        alert('New post added!')
+        toaster.notify('New post added!')
         this.props.history.push('/home')
       })
     }
@@ -83,7 +84,7 @@ class NewPost extends React.Component {
     renderPostTile = (id) => {
       const postToRender = this.props.allPosts.find(postObj => postObj.id === id)
         if (postToRender){
-      return <Segment style={{backgroundColor: '#F0F8FF'}}><PostTile post={postToRender}/></Segment>
+      return <Segment><PostTile post={postToRender}/></Segment>
       } else {
         return null
       }
@@ -91,9 +92,9 @@ class NewPost extends React.Component {
 
     renderMedia = (link_url) => {
       if(this.state.category === 'Video'){
-          return <ReactPlayer url={link_url} controls={true} width={500} style={{borderStyle: 'solid', borderColor: 'white', boxShadow: '2px 2px 2px gray'}}/>
+          return <ReactPlayer url={link_url} controls={true} width={700} height={400} style={{borderStyle: 'solid', borderColor: 'white', marginLeft: '35px'}}/>
       } else if (this.state.category === 'Audio'){
-          return <ReactPlayer url={link_url} controls={false} width={500} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{borderStyle: 'solid', borderColor: 'white', boxShadow: '2px 2px 2px gray'}}/>
+          return <ReactPlayer url={link_url} controls={false} width={700} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{borderStyle: 'solid', borderColor: 'white', marginLeft: '35px'}}/>
       } else if (this.state.category === 'Image'){
           return <Image src={link_url} verticalAlign='centered'/>
       } else if (this.state.category === 'Writing'){
@@ -119,7 +120,7 @@ class NewPost extends React.Component {
 
     render(){
       const allPostObjs = this.props.allPosts.map(postObj => {
-        return {key: postObj.id, text: postObj.title, value: postObj.title, id: postObj.id}
+        return {key: postObj.id, text: `${postObj.title} by ${postObj.user.first_name} ${postObj.user.last_name}`, value: postObj.title , id: postObj.id}
       })
       const catOptions = [
         {key: 'Audio', text: 'Audio', value: 'Audio'},
@@ -131,7 +132,7 @@ class NewPost extends React.Component {
       return (
         <div>
               <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
-                <Grid.Column style={{ maxWidth: 600, margin: 50 }} >
+                <Grid.Column style={{ maxWidth: 800, margin: 50 }} >
                   <Form onSubmit={this.handleSubmit}>
                     <Form.Group widths='equal'>
                         <Form.Input fluid placeholder='Link Url' name='link_url' onChange={this.handleChange}/>
@@ -139,10 +140,11 @@ class NewPost extends React.Component {
                     <Dropdown placeholder='Category' fluid selection options={catOptions} onChange={(event)=> this.handleCatChange(event)}/> 
                     <br/>
                     {this.renderMenuTile()}
+                    <br/>
                     {this.renderOtherMenu()}
                     <br/>
                     <Form.Group inline>
-                        <label>Is this inspired by another piece?</label>
+                        <label style={{color:'white'}}>Is this inspired by another piece?</label>
                         <Form.Radio
                             label='Yes'
                             value='yes'
@@ -160,9 +162,9 @@ class NewPost extends React.Component {
                         {this.state.post_id !== null && this.state.value === 'yes' ? this.renderPostTile(this.state.post_id): null }
                     <Button.Group>
                       <br/>
-                      <Form.Button primary>Submit</Form.Button>
+                      <Form.Button style={{backgroundColor: '#FDD000', color: 'white', fontVariant: 'small-caps'}}>Submit</Form.Button>
                       <Button.Or />
-                      <Link to={`/home`}><Button style={{ color: "white"}}>Wall</Button></Link>
+                      <Link to={`/home`}><Button style={{ color: "white", fontVariant: 'small-caps'}}>Home</Button></Link>
                     </Button.Group>
                   </Form>
                 </Grid.Column>

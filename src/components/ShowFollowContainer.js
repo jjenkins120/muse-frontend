@@ -2,7 +2,7 @@ import React from 'react'
 // import { fetchPostsSuccess } from '../actions/allPosts'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Menu, Input, Segment, Grid, Dropdown} from 'semantic-ui-react'
+import { Menu, Input, Segment, Grid, Dropdown, Header, Card} from 'semantic-ui-react'
 import FollowTile from "./FollowTile.js"
 
 class ShowFollowContainer extends React.Component {
@@ -21,7 +21,7 @@ class ShowFollowContainer extends React.Component {
 
     renderFollows = (followArray) => {
         return followArray.map(followObj => {
-            return <Segment style={{backgroundColor: '#F0F8FF'}}><FollowTile follow={followObj}/></Segment>
+            return <Segment style={{backgroundColor: '#EBAE34'}}><FollowTile follow={followObj}/></Segment>
         })
     }
 
@@ -39,13 +39,14 @@ class ShowFollowContainer extends React.Component {
 
     render() {
         const { activeItem } = this.state
-        const showFollowerArray = this.props.showUser.followers.map(followerObj => followerObj.id)
+        const theShowUser = this.props.allUsers.find(userObj => userObj.id === this.props.showUser.id)
+        const showFollowerArray = theShowUser.followers.map(followerObj => followerObj.id)
         const filteredFollowerArray = this.props.allUsers.filter(userObj => showFollowerArray.includes(userObj.id))
         const searchedFollowers = filteredFollowerArray.filter(followObj => {
             const fullName = followObj.first_name + " " + followObj.last_name
             return (followObj.first_name.includes(this.state.searchQuery))||(followObj.last_name.includes(this.state.searchQuery))||(fullName.includes(this.state.searchQuery)) 
         })
-        const showFollowingArray = this.props.showUser.following.map(followerObj => followerObj.id)
+        const showFollowingArray = theShowUser.following.map(followerObj => followerObj.id)
         const filteredFollowingArray = this.props.allUsers.filter(userObj => showFollowingArray.includes(userObj.id))
         const searchedFollowing = filteredFollowingArray.filter(followObj => {
             const fullName = followObj.first_name + " " + followObj.last_name
@@ -53,23 +54,24 @@ class ShowFollowContainer extends React.Component {
         })
         return (
             <div>
-            <div>See {this.props.showUser.first_name}'s follows</div>
+            <div></div>
             <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='top'>
             <Grid.Column style={{ maxWidth: 700, margin: 50 }} >
-            <Menu attached='top' tabular>
+            <Link to={`/home/showuser/${this.props.showUser.id}`}><Segment><Header style={{fontSize:'50px', color: 'black'}}>{this.props.showUser.first_name} {this.props.showUser.last_name}</Header></Segment></Link>
+            <Menu  style={{ color:'white', backgroundColor: '#36454F', marginTop: '5%'}}>
                 <Menu.Item
                 name='Followers'
                 active={activeItem === 'Followers'}
                 onClick={this.handleItemClick}
-                style={{backgroundColor: ''}}
+                style={{color: 'white'}}
                 />
                 <Menu.Item
                 name='Following'
                 active={activeItem === 'Following'}
                 onClick={this.handleItemClick}
-                style={{backgroundColor: ''}}
+                style={{color: 'white'}}
                 />
-                <Dropdown item text={this.state.sortBy}>
+                <Dropdown item text={this.state.sortBy} style={{color: 'white'}}>
                 <Dropdown.Menu>
                     <Dropdown.Item name='Most Pieces' onClick={this.handleSortClick}>Most Pieces</Dropdown.Item>
                     <Dropdown.Item name='Fewest Pieces' onClick={this.handleSortClick}>Fewest Pieces</Dropdown.Item>

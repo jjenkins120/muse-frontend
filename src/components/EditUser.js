@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updateUser } from '../actions/user'
 import { fetchAllUsersSuccess } from '../actions/allUsers'
+import { selectUser } from '../actions/showUser'
+import toaster from 'toasted-notes'
+import "toasted-notes/src/styles.css"; 
 
 
 class EditUser extends React.Component {
@@ -55,8 +58,9 @@ class EditUser extends React.Component {
             .then(updatedUser => {
                 this.props.updateUser(updatedUser)
                 this.sendNewAllUsersFetch()
-                this.props.history.push('/home')
-                alert(`Your profile has been updated!`)
+                this.props.selectUser(updatedUser)
+                this.props.history.push(`/home/showuser/${updatedUser.id}`)
+                toaster.notify(`Your profile has been updated!`)
             })
         }
         
@@ -67,32 +71,32 @@ class EditUser extends React.Component {
                 <Grid.Column style={{ maxWidth: 600, margin: 50 }} >
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Group widths='equal'>
-                            <Form.Input fluid label='Username' name='username' value={this.state.username} onChange={this.handleChange}/>
+                            <Form.Input fluid placeholder='Username' name='username' value={this.state.username} onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group widths='equal'>   
-                            <Form.Input label='Password' placeholder='Enter New Password' name='password' value={this.state.password} onChange={this.handleChange}/>
+                            <Form.Input placeholder='Enter New Password' name='password' value={this.state.password} onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group widths='equal'>    
-                            <Form.Input label='First Name' name='first_name' value={this.state.first_name} onChange={this.handleChange}/>  
-                            <Form.Input label='Last Name' name='last_name' value={this.state.last_name} onChange={this.handleChange}/>
+                            <Form.Input name='first_name' placeholder='First Name' value={this.state.first_name} onChange={this.handleChange}/>  
+                            <Form.Input name='last_name' placeholder='Last Name' value={this.state.last_name} onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group widths='equal'>    
-                            <Form.Input label='Email' name='email' value={this.state.email} onChange={this.handleChange}/> 
+                            <Form.Input name='email' placeholder='Email' value={this.state.email} onChange={this.handleChange}/> 
                         </Form.Group>    
                         <Form.Group widths='equal'>    
-                            <Form.TextArea label='Bio' name='bio' value={this.state.bio} onChange={this.handleChange}/> 
+                            <Form.TextArea name='bio' placeholder='Bio' value={this.state.bio} onChange={this.handleChange}/> 
                         </Form.Group>    
                         <Form.Group widths='equal'>    
-                            <Form.Input label='Location' name='location' value={this.state.location} onChange={this.handleChange}/> 
+                            <Form.Input name='location' placeholder='Location' value={this.state.location} onChange={this.handleChange}/> 
                         </Form.Group>    
                         <Form.Group widths='equal'>    
-                            <Form.Input label='Profile Image URL' name='image_url' value={this.state.image_url} onChange={this.handleChange}/> 
+                            <Form.Input name='image_url' placeholder='Profile Image URL' value={this.state.image_url} onChange={this.handleChange}/> 
                         </Form.Group>    
                         <Button.Group style={{ margin: 20 }}>
-                            <Form.Button primary>Update</Form.Button>
+                            <Form.Button style={{backgroundColor: '#FDD000', color: 'white', fontVariant: 'small-caps'}}>Submit</Form.Button>
                         <Button.Or />
-                            <Link to={`/home`}><Button>Home</Button></Link>
-                        </Button.Group>
+                            <Link to={`/home/showuser/${this.props.user.id}`}><Button style={{ color: "white", fontVariant: 'small-caps'}}>Profile</Button></Link>
+                        </Button.Group>    
                     </Form>
                 </Grid.Column>
             </Grid>
@@ -109,6 +113,7 @@ const mapStateToProps = (state) => {
   }
   
   const mapDispatchToProps = {
+    selectUser,
     updateUser,
     fetchAllUsersSuccess
   }

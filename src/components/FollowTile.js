@@ -1,35 +1,43 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Card, Image, Icon, Segment, Button } from 'semantic-ui-react'
+import { Card, Image, Icon, Segment, Button, Header } from 'semantic-ui-react'
 import { selectUser } from '../actions/showUser'
 
 
 class FollowTile extends React.Component {
     
-    
-    displayFollowing = () => {
-        const followInst = this.props.allUsers.find(userObj => userObj.id === this.props.follow.id)
+
+    renderFollowInfo = (followInst) => {
+      return this.props.user.id !== followInst.id ? this.displayFollowing(followInst) : null
+    }
+
+    displayFollowing = (followInst) => {
         const followingIDArray = this.props.user.following.map(followingInt => followingInt.id)
-        return followingIDArray.includes(followInst.id) ? "Following" : "Not following"
+        return followingIDArray.includes(followInst.id) ? "You are following" : "You are not following"
     }
     
     render(){
         const followInstance = this.props.allUsers.find(userObj => userObj.id === this.props.follow.id)
         return(
             <div>
-                <Card onClick={() => this.props.selectUser(followInstance)}>
+                <Segment onClick={() => this.props.selectUser(followInstance)}>
                 <Link to={`/home/showuser/${followInstance.id}`}>
                     <Card.Content>
-                    <Card.Header>{followInstance.first_name} {followInstance.last_name}</Card.Header>
-                        {/* <Card.Meta>Joined in 2016</Card.Meta> */}
                         <Card.Description>
-        
+                    <Header as='h2'>
+                        <Image src={followInstance.image_url} circular size='medium'/>
+                        <Header.Content>
+                        {followInstance.first_name} {followInstance.last_name}
+                        </Header.Content>
+                    </Header>
                         </Card.Description>
                     </Card.Content>
                 </Link> 
-                </Card>
-                {this.props.showUser.id !== this.props.user.id ? this.displayFollowing() : null}
+                </Segment>
+                <div>
+                {this.props.showUser.id !== this.props.user.id ? this.renderFollowInfo(followInstance) : null}
+                </div>
             </div>
         )
     }

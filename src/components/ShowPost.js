@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Segment, Image, Card, Icon, Button, Grid } from 'semantic-ui-react'
+import { Segment, Image, Card, Icon, Button, Grid, Header, Divider} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { addFollowingToUser } from '../actions/user'
 import { addInspirationToUser } from '../actions/user'
@@ -14,6 +14,8 @@ import PostTile from "./PostTile.js"
 import { selectPost } from '../actions/showPost'
 import { selectUser } from '../actions/showUser'
 import ReactPlayer from 'react-player'
+import toaster from "toasted-notes";
+import "toasted-notes/src/styles.css"; 
 
 
 class ShowPost extends React.Component { 
@@ -86,14 +88,14 @@ class ShowPost extends React.Component {
             console.log(newFollow)
             this.sendNewFolFetch()
             this.props.addFollowingToUser(this.props.showPost.user)
-            alert(`You are now following ${this.props.showPost.user.first_name} ${this.props.showPost.user.last_name}`)
+            toaster.notify(`You are now following ${this.props.showPost.user.first_name} ${this.props.showPost.user.last_name}`)
         })
     }
 
     followBtn = () => {
         const postUser = this.props.allUsers.find(userObj => userObj.id === this.props.showPost.user.id)
         const isFollowing = this.props.user.following.find(followObj => followObj.id === postUser.id)
-        return isFollowing ? "Following" : <Button onClick={this.handleFollowClick}>Follow</Button>
+        return isFollowing ? "Following" : <Card onClick={this.handleFollowClick} style={{ backgroundColor: '#36454F',color: 'white'}}>Follow</Card>
     }
 
     handleDelClick = (id) => {
@@ -153,8 +155,8 @@ class ShowPost extends React.Component {
         .then(() => {
             this.props.deleteUsersPost(this.props.showPost.id)
             this.sendNewDelFetch()
+            toaster.notify('Your Post is deleted!')
             this.props.history.push('/home')
-            alert('Your Post is deleted!')
         })
     } 
 
@@ -176,9 +178,9 @@ class ShowPost extends React.Component {
         const inspirationIds = this.props.user.inspirations.map(inspirationObj => inspirationObj.id)
         const showingPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id)
         if (inspirationIds.includes(showingPost.id)){
-           return <div><div>Ready to submit your inspired Art?</div><Link to={ {pathname: `/home/newinspiredpost`, state: {post_id: this.props.showPost.id} } } ><Button>Submit my work</Button></Link><Button onClick={this.handleNoLongerInspiredClick}>I'm no longer inspired</Button></div> 
+           return <div><div>Ready to submit your inspired Art?</div><br/><Link to={ {pathname: `/home/newinspiredpost`, state: {post_id: this.props.showPost.id} } } ><Card style={{ backgroundColor: '#36454F',color: 'white'}}>Submit my work</Card></Link><Card onClick={this.handleNoLongerInspiredClick} style={{ backgroundColor: '#36454F',color: 'white'}}>I'm no longer inspired</Card></div> 
         } else {
-            return <Button onClick={this.feelingInspiredClick}>Feeling Inspired?</Button>
+            return <Card onClick={this.feelingInspiredClick} style={{ backgroundColor: '#36454F',color: 'white'}}>Feeling Inspired?</Card>
         }
     }
 
@@ -200,7 +202,7 @@ class ShowPost extends React.Component {
             console.log(new_user_post)
             this.sendInspireFetch()
             this.props.addInspirationToUser(this.props.showPost)
-            alert('This piece has been added to those that inspire you')
+            toaster.notify('This piece has been added to those that inspire you')
         })
     }
 
@@ -217,22 +219,22 @@ class ShowPost extends React.Component {
         .then(() => {
             this.sendInspireFetch()
             this.props.deleteInspirationFromUser(this.props.showPost.id)
-            alert('This piece has been removed from your inspirations')
+            toaster.notify('This piece has been removed from your inspirations')
         })
     }
 
     renderSeeProfileBtn = () => {
         const displayUser = this.props.allUsers.find(userObj => userObj.id === this.props.showPost.user.id)
-        return <Button onClick={() => this.props.selectUser(displayUser)}><Link to={`/home/showuser/${displayUser.id}`}>See Profile</Link></Button>
+        return <Card onClick={() => this.props.selectUser(displayUser)} style={{backgroundColor:'#36454F'}}><Link to={`/home/showuser/${displayUser.id}`} style={{color: 'white'}}>See Profile</Link></Card>
     }
 
     renderMedia = (postInstance) => {
         if(postInstance.category === 'Video'){
-            return <ReactPlayer url={postInstance.link_url} controls={true} width={500}/>
+            return <ReactPlayer url={postInstance.link_url} controls={true} width={700} height={400} style={{marginLeft: '100px'}}/>
         } else if (postInstance.category === 'Audio'){
-            return <ReactPlayer url={postInstance.link_url} controls={false} width={500} height={150} textAlign='center'/>
+            return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} textAlign='center' style={{marginLeft: '100px'}}/>
         } else if (postInstance.category === 'Image'){
-            return <Image src={postInstance.link_url} />
+            return <Image src={postInstance.link_url} style={{marginLeft: '300px'}}/>
         } else if (postInstance.category === 'Writing'){
             return "Writing goes here"
         } 
@@ -241,10 +243,10 @@ class ShowPost extends React.Component {
     render(){
         return(
             <div>
-                <Grid>
-                    <Grid.Row>
-                        <Grid.Column width={3}>
-                            <Card>
+                <Grid textAlign='center' style={{ }} verticalAlign='top'>
+                    <Grid.Row style={{marginTop: '50px', marginBottom: '25px'}}>
+                        <Grid.Column width={4} >
+                            <Card style={{marginLeft: '125px'}}>
                             <Image src={this.props.showPost.user.image_url} wrapped ui={false}/>
                             <Card.Content>
                                 <Card.Description>Artist</Card.Description>
@@ -257,34 +259,36 @@ class ShowPost extends React.Component {
                             </Card.Content>
                             </Card>
                         </Grid.Column>
-                        <Grid.Column width={10}>
-                        <Segment.Group>
-                            <Segment>{this.props.showPost.title}</Segment>
+                        <Grid.Column width={8} verticalAlign='top'>
                             <Segment.Group>
-                            <Segment>{this.renderMedia(this.props.showPost)}ShowPost Media goes here</Segment>
+                                <Segment>{this.renderMedia(this.props.showPost)}</Segment>
+                                <Segment><Header>{this.props.showPost.title}</Header>{this.props.showPost.description}<br/>{this.props.showPost.user.id === this.props.user.id ? <Card onClick={() => this.handleDelClick(this.props.showPost.id)} style={{ backgroundColor: '#36454F',color: 'white', left:'34%'}}>Delete this Post</Card> : null }</Segment>
+                                
                             </Segment.Group>
-                            <Segment.Group>
-                            <Segment>{this.props.showPost.description} ShowPost Information goes here</Segment>
-                            </Segment.Group>
-                            {this.props.showPost.user.id === this.props.user.id ? <Button onClick={() => this.handleDelClick(this.props.showPost.id)}>Delete this Post</Button> : null }
-                            <Segment>
-                            This work was inspired by:
-                            {this.renderInspiredBy()}
-                            </Segment>
-                            <Segment>
-                            This work has inspired the following:
-                            {this.renderPostsInspiredPosts()}
-                            </Segment>
-                            {/* create boolean function that if there are no inspire works, displays a message that says yet to inspire, otherwise tile all of the works it has inspired */}
-                        </Segment.Group>
                         </Grid.Column>
-                        <Grid.Column width={3}>
-                        <Card>
+                        <Grid.Column width={4} verticalAlign='top'>
+                        <Card style={{marginLeft:'35px'}} >
                             <Card.Content extra>
                                 {this.renderFeelingInspiredBtns()}
                             </Card.Content>
                             </Card>
                         </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Grid verticalAlign='center'>
+                    <Grid.Row>
+                        <Grid.Column width={7} >
+                            <Segment>
+                                <Header style={{fontWeight: '1', fontSize: '25px' }}>This work was inspired by:</Header>
+                            </Segment>
+                            {this.renderInspiredBy()}
+                        </Grid.Column>    
+                        <Grid.Column width={7}>
+                            <Segment>
+                                <Header style={{fontWeight: '1', fontSize: '25px' }}>This work has inspired the following:</Header>
+                            </Segment>
+                            {this.renderPostsInspiredPosts()}
+                        </Grid.Column>    
                     </Grid.Row>
                 </Grid>
             </div>
