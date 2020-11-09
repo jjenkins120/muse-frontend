@@ -10,13 +10,13 @@ class PostTile extends React.Component {
     
     renderMedia = (postInstance) => {
         if(postInstance.category === 'Video'){
-            return <ReactPlayer url={postInstance.link_url} controls={true} width={700} height={400} style={{ boxShadow: '2px 2px 2px gray', paddingLeft}}/>
+            return <ReactPlayer url={postInstance.link_url} controls={true} width={700} height={400} style={{ boxShadow: '2px 2px 2px gray'}}/>
         } else if (postInstance.category === 'Audio'){
             return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{ borderStyle: 'solid', borderColor: 'white', boxShadow: '2px 2px 2px gray'}}/>
         } else if (postInstance.category === 'Image'){
             return <Image src={postInstance.link_url} verticalAlign='centered'/>
         } else if (postInstance.category === 'Writing'){
-            return "Writing goes here"
+            return <a href={postInstance.link_url} target="_blank"><Card style={{backgroundColor:'#36454F', color:'white'}}>{postInstance.title}</Card></a>
         } 
     }
 

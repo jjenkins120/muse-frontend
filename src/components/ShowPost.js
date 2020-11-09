@@ -234,9 +234,9 @@ class ShowPost extends React.Component {
         } else if (postInstance.category === 'Audio'){
             return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} textAlign='center' style={{marginLeft: '100px'}}/>
         } else if (postInstance.category === 'Image'){
-            return <Image src={postInstance.link_url} style={{marginLeft: '300px'}}/>
+            return <Image src={postInstance.link_url} style={{marginLeft: '250px'}}/>
         } else if (postInstance.category === 'Writing'){
-            return "Writing goes here"
+            return <a href={postInstance.link_url} target="_blank"><Card style={{backgroundColor:'#36454F', color:'white'}}>{postInstance.title}</Card></a>
         } 
     }
 

@@ -215,9 +215,9 @@ class ShowUser extends React.Component {
     renderFollowerInfo = () => {
         const followUser = this.props.allUsers.find(userObj => userObj.id === this.props.showUser.id)
        return <div>
-        {followUser.followers.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Followers'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Followers  |  {followUser.followers.length}</Segment></Link>}
+        {followUser.followers.length === 0 ? <Segment style={{backgroundColor:'#36454F', color:'white'}}> Followers  |  0</Segment> : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Followers'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Followers  |  {followUser.followers.length}</Segment></Link>}
         <br/>                    
-        {followUser.following.length === 0 ? "0" : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Following'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Following | {followUser.following.length}</Segment></Link>}
+        {followUser.following.length === 0 ? <Segment style={{backgroundColor:'#36454F', color:'white'}}> Following  |  0</Segment> : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Following'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Following | {followUser.following.length}</Segment></Link>}
         </div>
     }
 

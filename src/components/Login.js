@@ -3,7 +3,7 @@ import { Form, Grid, Header, Message, Segment, Icon, Image, Transition } from 's
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchUserSuccess } from '../actions/user'
-import muselogo from '../muse_logo.png'
+import muselogosharing from '../muse_logo_sharing.png'
 
 
 class Login extends React.Component {
@@ -51,11 +51,11 @@ class Login extends React.Component {
         <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
           <Grid.Column style={{ maxWidth: 450 }}>
             <Header>
+                <Image src={muselogosharing} style={{ width: '350px', marginLeft: '20px' }}/>
             </Header>
             { this.state.error && <h3 style={{ color: 'red'}}>{this.state.error}</h3> }
             <Form size='large' onSubmit={this.handleSubmit}>
               <Segment>
-                <Image src={muselogo} style={{ width: '300px', marginLeft: '45px', marginBottom: '25px' }}/>
                 <Form.Input fluid icon='user' iconPosition='left' placeholder='Username' name='username' onChange={this.handleChange}/>
                 <Form.Input fluid icon='lock' iconPosition='left' placeholder='Password' name='password' type='password' onChange={this.handleChange}/>
                 <Form.Button fluid size='large' style={{fontVariant: 'small-caps', backgroundColor: '#FABF00'}}> Login </Form.Button>
