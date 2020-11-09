@@ -12,7 +12,7 @@ class PostTile extends React.Component {
         if(postInstance.category === 'Video'){
             return <ReactPlayer url={postInstance.link_url} controls={true} width={700} height={400} style={{ boxShadow: '2px 2px 2px gray'}}/>
         } else if (postInstance.category === 'Audio'){
-            return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{ borderStyle: 'solid', borderColor: 'white', boxShadow: '2px 2px 2px gray'}}/>
+            return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{ boxShadow: '2px 2px 2px gray'}}/>
         } else if (postInstance.category === 'Image'){
             return <Image src={postInstance.link_url} verticalAlign='centered'/>
         } else if (postInstance.category === 'Writing'){
@@ -24,7 +24,7 @@ class PostTile extends React.Component {
         const postInstance = this.props.allPosts.find(postObj => postObj.id === this.props.post.id)
         return(
             <div>
-                <Segment vertical>
+                <Segment vertical style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}>
                     {this.renderMedia(postInstance)}
                 </Segment>
                 <Segment onClick={() => this.props.selectPost(postInstance)} vertical>

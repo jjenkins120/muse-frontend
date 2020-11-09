@@ -200,7 +200,7 @@ class ShowUser extends React.Component {
 
     renderBtns = () => {
         if(this.props.showUser.id === this.props.user.id){
-            return <div><Link to={`/home/edituser/${this.props.user.id}`}><Card style={{left:'9%', backgroundColor:'#36454F', color:'white'}}>Edit My Profile</Card></Link><Card onClick={this.handleDelClick} style={{left:'9%', backgroundColor:'#36454F', color:'white', marginBottom:'10px'}}>Delete My Profile</Card></div>
+            return <div><Link to={`/home/edituser/${this.props.user.id}`}><Card style={{left:'13%', backgroundColor:'#36454F', color:'white'}}>Edit My Profile</Card></Link><Card onClick={this.handleDelClick} style={{left:'13%', backgroundColor:'#36454F', color:'white', marginBottom:'10px'}}>Delete My Profile</Card></div>
         } else {
             return this.renderFollowBtns()
         }
@@ -209,14 +209,14 @@ class ShowUser extends React.Component {
     renderFollowBtns = () => {
         const showingUser = this.props.allUsers.find(userObj => userObj.id === this.props.showUser.id)
         const isFollowing = showingUser.followers.find(followObj => followObj.id === this.props.user.id)
-        return isFollowing ? <Card onClick={this.handleUnfollowClick} style={{left:'9%', backgroundColor:'#36454F', color:'white'}}>Unfollow</Card> : <Card onClick={this.handleFollowClick} style={{left:'9%', backgroundColor:'#36454F', color:'white'}}>Follow</Card>
+        return isFollowing ? <Card onClick={this.handleUnfollowClick} style={{left:'13%', backgroundColor:'#36454F', color:'white'}}>Unfollow</Card> : <Card onClick={this.handleFollowClick} style={{left:'13%', backgroundColor:'#36454F', color:'white'}}>Follow</Card>
     }
 
     renderFollowerInfo = () => {
         const followUser = this.props.allUsers.find(userObj => userObj.id === this.props.showUser.id)
        return <div>
         {followUser.followers.length === 0 ? <Segment style={{backgroundColor:'#36454F', color:'white'}}> Followers  |  0</Segment> : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Followers'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Followers  |  {followUser.followers.length}</Segment></Link>}
-        <br/>                    
+                         
         {followUser.following.length === 0 ? <Segment style={{backgroundColor:'#36454F', color:'white'}}> Following  |  0</Segment> : <Link to={ {pathname: `/home/showfollow/${followUser.id}`, state: {activeItem: 'Following'} } } ><Segment style={{backgroundColor:'#36454F', color:'white'}}> Following | {followUser.following.length}</Segment></Link>}
         </div>
     }
@@ -228,12 +228,11 @@ class ShowUser extends React.Component {
                     <Grid.Row>
                         <Grid.Column width={4}>
                         </Grid.Column>
-                        <Grid.Column verticalAlign='center' style={{ padding: '50px'}} width={8}>
-                            <Segment style={{ padding: '50px', boxShadow:'1px 1px 1px black',}} textAlign='centered'>
-                            <Grid columns={2} relaxed='very'>
-                            <Grid.Column>
-                                <Image src={this.props.showUser.image_url} size='medium' circular style={{left:'6%'}} textAlign='centered'/>
-                                <br/>
+                        <Grid.Column verticalAlign='center' style={{ paddingTop: '50px', paddingBottom:'50px'}} width={8}>
+                            <Segment style={{ boxShadow:'1px 1px 1px black',}} textAlign='centered'>
+                            <Grid columns={2} relaxed='very' style={{paddingTop:'25px', paddingBottom: '25px', margin: 'auto', display: 'flex', justifyContent: 'center'}}>
+                            <Grid.Column style={{justifyContent: 'center'}}>
+                                <Image src={this.props.showUser.image_url} size='medium' circular style={{left: '10%'}}/>
                                 <Header style={{fontWeight: '', fontSize: '50px' }}>{this.props.showUser.first_name} {this.props.showUser.last_name}</Header>
                                 {this.renderBtns()}
                                 <div>
