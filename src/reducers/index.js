@@ -7,6 +7,7 @@ import showPost from './showPost'
 import allUsers from './allUsers'
 import showUser from './showUser'
 import userPosts from './userPosts'
+import comments from './comments'
 
 export default combineReducers({
   user,
@@ -16,5 +17,6 @@ export default combineReducers({
   showPost, 
   allUsers,
   showUser, 
-  userPosts
+  userPosts, 
+  comments
 })

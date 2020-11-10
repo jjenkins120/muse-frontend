@@ -5,6 +5,7 @@ import { fetchPostsSuccess } from '../actions/allPosts'
 import { fetchAllUsersSuccess } from '../actions/allUsers'
 import { fetchAllUserPostsSuccess } from '../actions/userPosts'
 import { fetchFollowsSuccess } from '../actions/follows'
+import { fetchCommentsSuccess } from '../actions/comments'
 import { Route, Switch } from 'react-router-dom'
 import NavBar from "./NavBar.js"
 import PostContainer from "./PostContainer.js"
@@ -58,6 +59,11 @@ class Home extends React.Component {
       .then(follows => {
         this.props.fetchFollowsSuccess(follows)
       })
+      fetch('http://localhost:3000/comments')
+      .then(resp => resp.json())
+      .then(comments => {
+        this.props.fetchCommentsSuccess(comments)
+      })
     }
 
     render(){
@@ -85,6 +91,7 @@ class Home extends React.Component {
     fetchPostsSuccess, 
     fetchAllUserPostsSuccess,
     fetchFollowsSuccess,
+    fetchCommentsSuccess,
   }
 
   export default connect(null, mapDispatchToProps)(Home);

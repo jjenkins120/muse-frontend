@@ -1,18 +1,167 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Card, Image, Icon, Segment, Header } from 'semantic-ui-react'
+import { Card, Image, Icon, Segment, Header, Feed, Divider, Radio, Button, Form, Container} from 'semantic-ui-react'
 import { selectPost } from '../actions/showPost'
+import { selectUser } from '../actions/showUser'
+import { fetchCommentsSuccess } from '../actions/comments'
+import { fetchPostsSuccess } from '../actions/allPosts'
 import ReactPlayer from 'react-player'
+import toaster from "toasted-notes";
+import "toasted-notes/src/styles.css"; 
+import moment from 'moment'
 
 
 class PostTile extends React.Component {
     
+    state = {
+        commentToggled: false,
+        commentForm: false,
+        newComment: ''
+    }
+
+    newCommentFetch = () => {
+        fetch('http://localhost:3000/comments')
+        .then(resp => resp.json())
+        .then(comments => {
+          this.props.fetchCommentsSuccess(comments)
+        })
+        fetch('http://localhost:3000/posts')
+        .then(resp => resp.json())
+        .then(allPosts => {
+            this.props.fetchPostsSuccess(allPosts)
+        })
+    }
+
+    deleteComment = (id) => {
+        toaster.notify(`Your comment is deleted.`)
+        const reqObj = {
+            method: 'DELETE'
+        }
+        fetch(`http://localhost:3000/comments/${id}`, reqObj)
+        .then(resp => resp.json())
+        .then(() => {
+            this.newCommentFetch()
+        })
+    }
+
+    handleCommentFormSubmit = (id) => {
+        if (this.state.newComment !== ''){
+        toaster.notify(`Your comment "${this.state.newComment}" has been added.`)
+        const newComment = {
+            content: this.state.newComment,
+            post_id: id, 
+            user_id: this.props.user.id
+        }
+        const reqObj = {
+             method: 'POST',
+             headers: {
+                'Content-Type':'application/json'
+             }, 
+             body: JSON.stringify(newComment)
+        }
+        fetch('http://localhost:3000/comments', reqObj)
+        .then(resp => resp.json())
+        .then(newComment => {
+            this.newCommentFetch()
+            this.setState({
+                newComment: ''
+            })
+        })
+        } else {
+            toaster.notify(`Your comment can't be empty.`)
+        }
+    }
+
+    handleCommentFormChange = (event) => {
+        this.setState({
+            newComment: event.target.value
+        })
+    }
+
+    renderNewCommentForm = (id) => {
+        return <div style={{margin: 'auto', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+            
+            <Form onSubmit={() => this.handleCommentFormSubmit(id)}>
+                <Form.Group>
+                <Form.Input
+                    placeholder='Add Comment'
+                    name='name'
+                    value={this.state.newComment}
+                    onChange={this.handleCommentFormChange}
+                />
+                <Form.Button content='+' style={{backgroundColor: '#FDD000', Color: 'white'}}/>
+                </Form.Group>
+            </Form>
+            </div>
+    }
+    
+
+    handleToggleClick = () => {
+        this.setState({
+            commentToggled: !this.state.commentToggled,
+            commentForm: false
+        })
+    }
+    
+    handleCommentBtnClick = () => {
+        this.setState({
+            commentForm: !this.state.commentForm,
+            newComment: ''
+        })
+    }
+
+    renderCommentBtn = () => {
+        if (!this.state.commentForm){
+            return <Button circular icon='plus' style={{backgroundColor:'#36454F', color:'white'}} onClick={this.handleCommentBtnClick}/>
+        } else if (this.state.commentForm){
+            return <Button circular icon='minus' style={{backgroundColor:'#36454F', color:'white'}} onClick={this.handleCommentBtnClick}/>
+        }
+    }
+
+    renderComments = (postInstance) => {
+        return this.state.commentToggled ? <div>{this.renderCommentsDisplay(postInstance)}<br/>{this.renderCommentBtn()}</div> : null
+    } 
+
+    renderCommentsDisplay = (postInstance) => {
+        if (postInstance.comments.length !== 0){
+        return postInstance.comments.map(commentObj => {
+            return this.renderIndividualComment(commentObj)
+        })
+        } else {
+            return <div><br/>There are no comments for this post yet</div>
+        }
+    }
+
+    renderIndividualComment = (commentObj) => {
+        const userLinkObj = this.props.allUsers.find(userObj => userObj.id === commentObj.user.id)
+        return <div>
+                    <Feed>
+                        <Feed.Event>
+                        <Feed.Label>
+                            <img src={commentObj.user.image_url} />
+                        </Feed.Label>
+                        <Feed.Content>
+                            <Feed.Summary>
+                            <Feed.User onClick={() => this.props.selectUser(userLinkObj)}><Link to={`/home/showuser/${userLinkObj.id}`}>{commentObj.user.first_name} {commentObj.user.last_name}</Link></Feed.User> 
+                            <Feed.Date>{moment(commentObj.created_at).format('lll')}</Feed.Date>
+                            </Feed.Summary>
+                            <Feed.Meta>
+                                {commentObj.content}
+                            </Feed.Meta>
+                            {this.props.user.id === commentObj.user.id ? <Icon name='delete' onClick={()=> this.deleteComment(commentObj.id)}/> : null}
+                        </Feed.Content>
+                        </Feed.Event>
+                    </Feed> 
+                </div> 
+    }
+
+
     renderMedia = (postInstance) => {
         if(postInstance.category === 'Video'){
             return <ReactPlayer url={postInstance.link_url} controls={true} width={700} height={400} style={{ boxShadow: '2px 2px 2px gray'}}/>
         } else if (postInstance.category === 'Audio'){
-            return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} config={{soundcloud: {options: { show_user: false, color: "FFD700", show_artwork: false}}}} style={{ boxShadow: '2px 2px 2px gray'}}/>
+            return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} config={{soundcloud: {options: { show_user: false, color: "#FDD100", show_artwork: false, buying: false}}}} style={{ boxShadow: '2px 2px 2px gray'}}/>
         } else if (postInstance.category === 'Image'){
             return <Image src={postInstance.link_url} verticalAlign='centered'/>
         } else if (postInstance.category === 'Writing'){
@@ -27,7 +176,7 @@ class PostTile extends React.Component {
                 <Segment vertical style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}>
                     {this.renderMedia(postInstance)}
                 </Segment>
-                <Segment onClick={() => this.props.selectPost(postInstance)} vertical>
+                <Segment onClick={() => this.props.selectPost(postInstance)} basic>
                     <Link to={`/home/showpost/${postInstance.id}`}>
                     <Header as='h2'>
                         <Image src={postInstance.user.image_url} circular/>
@@ -36,8 +185,12 @@ class PostTile extends React.Component {
                         <Header.Subheader> by {postInstance.user.first_name} {postInstance.user.last_name}</Header.Subheader>
                         </Header.Content>
                     </Header>
-                    </Link> 
+                    </Link>
                 </Segment>
+                    <Segment basic><Radio slider onClick={this.handleToggleClick} /></Segment>
+                    {this.renderComments(postInstance)}
+                    {this.state.commentForm ? this.renderNewCommentForm(postInstance.id) : null}
+                    
             </div>
         )
     }
@@ -45,12 +198,18 @@ class PostTile extends React.Component {
 
 const mapStateToProps = (state) => {
     return { 
-      allPosts: state.allPosts
+      allPosts: state.allPosts,
+      comments: state.comments,
+      user: state.user,
+      allUsers: state.allUsers
     }
   }
   
   const mapDispatchToProps = {
-    selectPost
+    selectUser,
+    selectPost, 
+    fetchCommentsSuccess, 
+    fetchPostsSuccess,
   }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostTile);

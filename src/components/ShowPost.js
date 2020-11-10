@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Segment, Image, Card, Icon, Button, Grid, Header, Divider} from 'semantic-ui-react'
+import { Segment, Image, Card, Icon, Button, Grid, Header, Divider, Form, Feed, Radio} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { addFollowingToUser } from '../actions/user'
 import { addInspirationToUser } from '../actions/user'
@@ -10,15 +10,161 @@ import { fetchAllUserPostsSuccess } from '../actions/userPosts'
 import { fetchFollowsSuccess } from '../actions/follows'
 import { deleteUsersPost } from '../actions/user'
 import { deleteInspirationFromUser } from '../actions/user'
+import { fetchCommentsSuccess } from '../actions/comments'
 import PostTile from "./PostTile.js"
-import { selectPost } from '../actions/showPost'
+import { addShowPostComment } from '../actions/showPost'
+import { deleteShowPostComment} from '../actions/showPost'
 import { selectUser } from '../actions/showUser'
 import ReactPlayer from 'react-player'
 import toaster from "toasted-notes";
 import "toasted-notes/src/styles.css"; 
+import moment from 'moment'
 
 
-class ShowPost extends React.Component { 
+class ShowPost extends React.Component {
+    state = {
+        commentToggled: false,
+        commentForm: false,
+        newComment: ''
+    }
+
+    newCommentFetch = () => {
+        fetch('http://localhost:3000/comments')
+        .then(resp => resp.json())
+        .then(comments => {
+          this.props.fetchCommentsSuccess(comments)
+        })
+        fetch('http://localhost:3000/posts')
+        .then(resp => resp.json())
+        .then(allPosts => {
+            this.props.fetchPostsSuccess(allPosts)
+        })
+    }
+
+    deleteComment = (id) => {
+        const reqObj = {
+            method: 'DELETE'
+        }
+        fetch(`http://localhost:3000/comments/${id}`, reqObj)
+        .then(resp => resp.json())
+        .then(() => {
+            this.newCommentFetch()
+            toaster.notify(`Your comment is deleted.`)
+            this.props.deleteShowPostComment(id)
+        })
+    }
+
+    handleCommentFormSubmit = (id) => {
+        if (this.state.newComment !== ''){
+        toaster.notify(`Your comment "${this.state.newComment}" has been added.`)
+        const newComment = {
+            content: this.state.newComment,
+            post_id: id, 
+            user_id: this.props.user.id
+        }
+        const reqObj = {
+             method: 'POST',
+             headers: {
+                'Content-Type':'application/json'
+             }, 
+             body: JSON.stringify(newComment)
+        }
+        fetch('http://localhost:3000/comments', reqObj)
+        .then(resp => resp.json())
+        .then(newComment => {
+            this.newCommentFetch()
+            this.props.addShowPostComment(newComment)
+            this.setState({
+                newComment: ''
+            })
+        })
+        } else {
+            toaster.notify(`Your comment can't be empty.`)
+        }
+    }
+
+    handleCommentFormChange = (event) => {
+        this.setState({
+            newComment: event.target.value
+        })
+    }
+
+    renderNewCommentForm = (id) => {
+        return <div style={{margin: 'auto', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+            
+            <Form onSubmit={() => this.handleCommentFormSubmit(id)}>
+                <Form.Group>
+                <Form.Input
+                    placeholder='Add Comment'
+                    name='name'
+                    value={this.state.newComment}
+                    onChange={this.handleCommentFormChange}
+                />
+                <Form.Button content='+' style={{backgroundColor: '#FDD000', Color: 'white'}}/>
+                </Form.Group>
+            </Form>
+            </div>
+    }
+    
+
+    handleToggleClick = () => {
+        this.setState({
+            commentToggled: !this.state.commentToggled,
+            commentForm: false
+        })
+    }
+    
+    handleCommentBtnClick = () => {
+        this.setState({
+            commentForm: !this.state.commentForm,
+            newComment: ''
+        })
+    }
+
+    renderCommentBtn = () => {
+        if (!this.state.commentForm){
+            return <Button circular icon='plus' style={{backgroundColor:'#36454F', color:'white'}} onClick={this.handleCommentBtnClick}/>
+        } else if (this.state.commentForm){
+            return <Button circular icon='minus' style={{backgroundColor:'#36454F', color:'white'}} onClick={this.handleCommentBtnClick}/>
+        }
+    }
+
+    renderComments = (postInstance) => {
+        return this.state.commentToggled ? <div>{this.renderCommentsDisplay(postInstance)}<br/>{this.renderCommentBtn()}</div> : null
+    } 
+
+    renderCommentsDisplay = (postInstance) => {
+        if (postInstance.comments.length !== 0){
+        return postInstance.comments.map(commentObj => {
+            return this.renderIndividualComment(commentObj)
+        })
+        } else {
+            return <div><br/>There are no comments for this post yet</div>
+        }
+    }
+
+    renderIndividualComment = (commentObj) => {
+        const userLinkObj = this.props.allUsers.find(userObj => userObj.id === commentObj.user.id)
+        return <div>
+                    <Feed>
+                        <Feed.Event>
+                        <Feed.Label>
+                            <img src={commentObj.user.image_url} />
+                        </Feed.Label>
+                        <Feed.Content>
+                            <Feed.Summary>
+                            <Feed.User onClick={() => this.props.selectUser(userLinkObj)}><Link to={`/home/showuser/${userLinkObj.id}`}>{commentObj.user.first_name} {commentObj.user.last_name}</Link></Feed.User>
+                            <Feed.Date>{moment(commentObj.created_at).format('lll')}</Feed.Date>
+                            </Feed.Summary>
+                            <Feed.Meta>
+                                {commentObj.content}
+                            </Feed.Meta>
+                            {this.props.user.id === commentObj.user.id ? <Icon name='delete' onClick={()=> this.deleteComment(commentObj.id)}/> : null}
+                        </Feed.Content>
+                        </Feed.Event>
+                    </Feed> 
+                </div> 
+    } 
 
     sendNewDelFetch = () => {
         fetch('http://localhost:3000/posts')
@@ -163,14 +309,14 @@ class ShowPost extends React.Component {
     renderPostsInspiredPosts = () => {
         const showingPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id) 
         return showingPost.posts.map(postObj => {
-            return <Segment><Link to={`/home/showpost/${postObj.id}`}><PostTile post={postObj}/></Link></Segment>
+            return <Segment><PostTile post={postObj}/></Segment>
         })
     }
 
     renderInspiredBy = () => {
         const showingPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id)
         if (showingPost.post){
-            return <Segment><Link to={`/home/showpost/${showingPost.post.id}`}><PostTile post={showingPost.post}/></Link></Segment>
+            return <Segment><PostTile post={showingPost.post}/></Segment>
         } 
     }
 
@@ -230,13 +376,13 @@ class ShowPost extends React.Component {
 
     renderMedia = (postInstance) => {
         if(postInstance.category === 'Video'){
-            return <ReactPlayer url={postInstance.link_url} controls={true} width={700} height={400} style={{marginLeft: '100px'}}/>
+            return <ReactPlayer url={postInstance.link_url} controls={true} width={700} height={400} style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}/>
         } else if (postInstance.category === 'Audio'){
-            return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} textAlign='center' style={{marginLeft: '100px'}}/>
+            return <ReactPlayer url={postInstance.link_url} controls={false} width={700} height={150} textAlign='center' style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}/>
         } else if (postInstance.category === 'Image'){
-            return <Image src={postInstance.link_url} style={{marginLeft: '250px'}}/>
+            return <Image src={postInstance.link_url} style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}/>
         } else if (postInstance.category === 'Writing'){
-            return <a href={postInstance.link_url} target="_blank"><Card style={{backgroundColor:'#36454F', color:'white'}}>{postInstance.title}</Card></a>
+            return <a href={postInstance.link_url} target="_blank"><Card style={{backgroundColor:'#36454F', color:'white', margin: 'auto', display: 'flex', justifyContent: 'center'}}>{postInstance.title}</Card></a>
         } 
     }
 
@@ -259,11 +405,15 @@ class ShowPost extends React.Component {
                             </Card.Content>
                             </Card>
                         </Grid.Column>
-                        <Grid.Column width={8} verticalAlign='top'>
-                            <Segment.Group>
-                                <Segment>{this.renderMedia(this.props.showPost)}</Segment>
-                                <Segment><Header>{this.props.showPost.title}</Header>{this.props.showPost.description}<br/>{this.props.showPost.user.id === this.props.user.id ? <Card onClick={() => this.handleDelClick(this.props.showPost.id)} style={{ backgroundColor: '#36454F',color: 'white', left:'34%'}}>Delete this Post</Card> : null }</Segment>
-                                
+                        <Grid.Column width={8} verticalAlign='top' >
+                            <Segment.Group style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}>
+                                <Segment >{this.renderMedia(this.props.showPost)}</Segment>
+                                <Segment><Header>{this.props.showPost.title}</Header>{this.props.showPost.description}<br/>{this.props.showPost.user.id === this.props.user.id ? <Card onClick={() => this.handleDelClick(this.props.showPost.id)} style={{ backgroundColor: '#36454F',color: 'white', left:'34%'}}>Delete this Post</Card> : null }
+                                <br/>
+                                <Radio slider onClick={this.handleToggleClick} />
+                                {this.renderComments(this.props.showPost)}
+                                {this.state.commentForm ? this.renderNewCommentForm(this.props.showPost.id) : null}
+                                </Segment>  
                             </Segment.Group>
                         </Grid.Column>
                         <Grid.Column width={4} verticalAlign='top'>
@@ -302,7 +452,8 @@ const mapStateToProps = (state) => {
       user: state.user,
       allUsers: state.allUsers,  
       showPost: state.showPost,
-      userPosts: state.userPosts
+      userPosts: state.userPosts, 
+      comments: state.comments
     }
   }
   
@@ -315,7 +466,10 @@ const mapDispatchToProps = {
     fetchPostsSuccess,
     fetchAllUsersSuccess,
     fetchAllUserPostsSuccess,
-    fetchFollowsSuccess
+    fetchFollowsSuccess, 
+    fetchCommentsSuccess,
+    addShowPostComment, 
+    deleteShowPostComment
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShowPost);
