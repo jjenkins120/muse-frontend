@@ -10,7 +10,7 @@ class PostContainer extends React.Component {
   state = { 
     activeItem: 'All',
     searchQuery: '', 
-    sortBy: 'Sort' 
+    sortBy: 'Newest' 
   }
   
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })

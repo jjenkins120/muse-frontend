@@ -45,7 +45,8 @@ class PostTile extends React.Component {
         })
     }
 
-    handleCommentFormSubmit = (id) => {
+    handleCommentFormSubmit = (event, id) => {
+        event.preventDefault()
         if (this.state.newComment !== ''){
         toaster.notify(`Your comment "${this.state.newComment}" has been added.`)
         const newComment = {
@@ -82,7 +83,7 @@ class PostTile extends React.Component {
     renderNewCommentForm = (id) => {
         return <div style={{margin: 'auto', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
             
-            <Form onSubmit={() => this.handleCommentFormSubmit(id)}>
+            <Form onSubmit={(event) => this.handleCommentFormSubmit(event, id)}>
                 <Form.Group>
                 <Form.Input
                     placeholder='Add Comment'

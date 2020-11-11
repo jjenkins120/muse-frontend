@@ -15,7 +15,7 @@ import NewInspiredPost from './NewInspiredPost.js';
 import ShowUser from './ShowUser.js';
 import EditUser from './EditUser.js';
 import ShowFollowContainer from './ShowFollowContainer.js'
-import About from './About.js';
+
 
 class Home extends React.Component {
     
@@ -78,7 +78,6 @@ class Home extends React.Component {
               <Route exact path={'/home/showuser/:id'} component={ShowUser} />
               <Route exact path={'/home/edituser/:id'} component={EditUser} />
               <Route exact path={'/home/showfollow/:id'} component={ShowFollowContainer} />
-              <Route exact path={'/home/about'} component={About} />
             </Switch>
         </div>
       );

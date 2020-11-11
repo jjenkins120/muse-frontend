@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Grid, Button, Dropdown, Segment, Image } from 'semantic-ui-react'
+import { Form, Grid, Button, Dropdown, Segment, Image} from 'semantic-ui-react'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -13,6 +13,9 @@ import PostTile from './PostTile.js'
 import toaster from 'toasted-notes'
 import "toasted-notes/src/styles.css"; 
 
+
+
+
 class NewInspiredPost extends React.Component {
 
     state = {
@@ -23,6 +26,7 @@ class NewInspiredPost extends React.Component {
         user_id: this.props.user.id,
         likes: 0,
         category: null,
+        value: 'no'
     }
 
     sendNewPostFetch = () => {
@@ -63,6 +67,8 @@ class NewInspiredPost extends React.Component {
         })
     }
 
+    handleBtnChange = (e, { value }) => this.setState({ value })
+
     handleSubmit = (e) => {
       e.preventDefault()
       const reqObj = {
@@ -76,23 +82,28 @@ class NewInspiredPost extends React.Component {
       .then(resp => resp.json())
       .then(newPost => {
         this.props.addPostToUser(newPost)
-      })
-      const userPostToDelete = this.props.userPosts.find(userPostObj => {
-      return userPostObj.user_id === this.props.user.id && userPostObj.post_id === this.props.showPost.id  
-    })
-      const delreqObj = {
-          method: 'DELETE'
-      }
-      fetch(`http://localhost:3000/user_posts/${userPostToDelete.id}`, delreqObj)
-      .then(resp => resp.json())
-      .then(() => {
         this.sendNewPostFetch()
-        this.props.deleteInspirationFromUser(this.props.showPost.id)
-        toaster.notify('New post added! Note: the inspired piece has been removed from your inspirations')
-        this.props.history.push('/home')
       })
+      if (this.state.value === 'yes'){
+          const userPostToDelete = this.props.userPosts.find(userPostObj => {
+          return userPostObj.user_id === this.props.user.id && userPostObj.post_id === this.props.showPost.id  
+        })
+        const delreqObj = {
+            method: 'DELETE'
+        }
+        fetch(`http://localhost:3000/user_posts/${userPostToDelete.id}`, delreqObj)
+        .then(resp => resp.json())
+        .then(() => {
+          this.props.deleteInspirationFromUser(this.props.showPost.id)
+          toaster.notify('New post added! Note: the inspired piece has been removed from your inspirations')
+          this.props.history.push('/home')
+        })
+      } else {
+          toaster.notify('New post added! Note: the inspired piece remains in your inspirations')
+          this.props.history.push('/home')
+      }
     }
-  
+
     renderPostTile = () => {
         const renderPost = this.props.allPosts.find(postObj => postObj.id === this.props.showPost.id)
         return <Segment style={{backgroundColor: 'white', width: '800px'}}> This submission is inspired by <PostTile post={renderPost}/></Segment>
@@ -110,21 +121,21 @@ class NewInspiredPost extends React.Component {
         } 
       }
       
-      renderMenuTile = () => {
-        if (this.state.link_url !== '' && this.state.category !== null){
-          return this.renderMedia(this.state.link_url)
-        } else {
-          return null
-        }
+    renderMenuTile = () => {
+      if (this.state.link_url !== '' && this.state.category !== null){
+        return this.renderMedia(this.state.link_url)
+      } else {
+        return null
       }
-  
-      renderOtherMenu = () => {
-        if (this.state.link_url !== '' && this.state.category !== null){
-          return <div><br/><Form.Group widths='equal'><Form.Input fluid placeholder='Title' name='title' onChange={this.handleChange}/></Form.Group><Form.Group widths='equal'><Form.TextArea  placeholder='Description...' name='description' onChange={this.handleChange}/></Form.Group></div>
-        } else {
-          return null
-        }
+    }
+
+    renderOtherMenu = () => {
+      if (this.state.link_url !== '' && this.state.category !== null){
+        return <div><br/><Form.Group widths='equal'><Form.Input fluid placeholder='Title' name='title' onChange={this.handleChange}/></Form.Group><Form.Group widths='equal'><Form.TextArea  placeholder='Description...' name='description' onChange={this.handleChange}/></Form.Group></div>
+      } else {
+        return null
       }
+    }
 
     render(){
         const { value } = this.state
@@ -149,6 +160,21 @@ class NewInspiredPost extends React.Component {
                     <Form.Group inline>
                         {this.renderPostTile()}    
                     </Form.Group>
+                    <Form.Group inline style={{margin: 'auto', display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+                        <label style={{color:'white'}}>Do you want to delete "{this.props.showPost.title}" from your inspirations after submission?</label>
+                        <Form.Radio
+                            label='Yes'
+                            value='yes'
+                            checked={value === 'yes'}
+                            onChange={this.handleBtnChange}
+                        />
+                        <Form.Radio
+                            label='No'
+                            value='no'
+                            checked={value === 'no'}
+                            onChange={this.handleBtnChange}
+                        />
+                    </Form.Group>
                     <Button.Group style={{ margin: 20 }}>
                         <Form.Button style={{backgroundColor: '#FDD000', color: 'white', fontVariant: 'small-caps'}}>Submit</Form.Button>
                     <Button.Or />
@@ -162,23 +188,23 @@ class NewInspiredPost extends React.Component {
     }
 }    
 
-    const mapStateToProps = (state) => {
-        return { 
-        user: state.user, 
-        allPosts: state.allPosts,
-        allUsers: state.allUsers,
-        userPosts: state.userPosts,
-        showPost: state.showPost
-        }
-    }
-  
-    const mapDispatchToProps = {
-        addPost, 
-        addPostToUser, 
-        fetchAllUsersSuccess,
-        fetchPostsSuccess,
-        fetchAllUserPostsSuccess, 
-        deleteInspirationFromUser
-    }
+  const mapStateToProps = (state) => {
+      return { 
+      user: state.user, 
+      allPosts: state.allPosts,
+      allUsers: state.allUsers,
+      userPosts: state.userPosts,
+      showPost: state.showPost
+      }
+  }
+
+  const mapDispatchToProps = {
+      addPost, 
+      addPostToUser, 
+      fetchAllUsersSuccess,
+      fetchPostsSuccess,
+      fetchAllUserPostsSuccess, 
+      deleteInspirationFromUser
+  }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewInspiredPost);
