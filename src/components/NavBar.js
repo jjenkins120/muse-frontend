@@ -19,11 +19,15 @@ class NavBar extends Component {
     this.props.selectUser(this.props.user)
   }
 
+  renderImage = () => {
+   return this.props.user.image_url ? <Image src={this.props.user.image_url} circular size='mini' /> : <div>{this.props.user.username}</div>
+  }
+
   render() {
     return (
       <div style={{backgroundColor: 'white'}}>
         <Menu pointing secondary>
-          <Menu.Item onClick={() => this.props.selectUser(this.props.user)} style={{ paddingLeft: '20px' }}><Link to={`/home/showuser/${this.props.user.id}`}><Image src={this.props.user.image_url} circular size='mini' /></Link></Menu.Item>
+    <Menu.Item onClick={() => this.props.selectUser(this.props.user)} style={{ paddingLeft: '20px' }}><Link to={`/home/showuser/${this.props.user.id}`}>{this.renderImage()}</Link></Menu.Item>
           <Menu.Menu position='right'>
           <Menu.Item ><Link to={`/home`}><Image src={muselogo} size='tiny' style={{ paddingBottom: '7px' }}/></Link></Menu.Item>
             <Dropdown style={{ marginTop: '20px', marginRight: '15px'}} >
