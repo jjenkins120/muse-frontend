@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Card, Image, Icon, Segment, Button, Header } from 'semantic-ui-react'
+import { Card, Image, Segment, Header } from 'semantic-ui-react'
 import { selectUser } from '../actions/showUser'
 
 

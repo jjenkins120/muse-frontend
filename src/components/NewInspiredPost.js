@@ -14,8 +14,6 @@ import toaster from 'toasted-notes'
 import "toasted-notes/src/styles.css"; 
 
 
-
-
 class NewInspiredPost extends React.Component {
 
     state = {

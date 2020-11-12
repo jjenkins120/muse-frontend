@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Grid, Image, Segment, Button, Header, Label, Card, Icon, Divider} from 'semantic-ui-react'
+import { Grid, Image, Segment, Header, Card, Icon } from 'semantic-ui-react'
 import toaster from "toasted-notes";
 import "toasted-notes/src/styles.css"; 
 import { Link } from 'react-router-dom'
@@ -188,6 +188,7 @@ class ShowUser extends React.Component {
             console.log('User deleted')
             this.props.userLogout()
             localStorage.removeItem('app_token')
+            toaster.notify(`Your user profile has been deleted`)
             this.props.history.push('/')
         })
     }
@@ -243,7 +244,7 @@ class ShowUser extends React.Component {
                                 <br/>
                                 {this.renderFollowerInfo()}
                             </Grid.Column>
-                            <Grid.Column>   
+                            <Grid.Column style={{fontSize:'large', margin: 'auto', display: 'flex', justifyContent: 'center'}}>   
                                 {this.props.showUser.bio}
                             </Grid.Column>     
                             </Grid> 
@@ -295,9 +296,6 @@ const mapDispatchToProps = {
    fetchAllUsersSuccess, 
    addFollowingToUser, 
    deleteFollowingFromUser 
-//    deleteFollow,
-//    deleteUserPost, 
-//    deleteUser, 
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShowUser);

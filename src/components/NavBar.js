@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Icon, Image } from 'semantic-ui-react'
+import { Menu, Dropdown, Image } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { userLogout } from '../actions/user'
@@ -27,9 +27,9 @@ class NavBar extends Component {
     return (
       <div style={{backgroundColor: 'white'}}>
         <Menu pointing secondary>
-    <Menu.Item onClick={() => this.props.selectUser(this.props.user)} style={{ paddingLeft: '20px' }}><Link to={`/home/showuser/${this.props.user.id}`}>{this.renderImage()}</Link></Menu.Item>
+          <Menu.Item onClick={() => this.props.selectUser(this.props.user)} style={{ paddingLeft: '20px' }}><Link to={`/home/showuser/${this.props.user.id}`}>{this.renderImage()}</Link></Menu.Item>
           <Menu.Menu position='right'>
-          <Menu.Item ><Link to={`/home`}><Image src={muselogo} size='tiny' style={{ paddingBottom: '7px' }}/></Link></Menu.Item>
+            <Menu.Item ><Link to={`/home`}><Image src={muselogo} size='tiny' style={{ paddingBottom: '7px' }}/></Link></Menu.Item>
             <Dropdown style={{ marginTop: '20px', marginRight: '15px'}} >
               <Dropdown.Menu>
                 <Link to='/home/newpost'><Dropdown.Item>Post New Art</Dropdown.Item></Link>

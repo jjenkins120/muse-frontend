@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Segment, Image, Card, Icon, Button, Grid, Header, Divider, Form, Feed, Radio} from 'semantic-ui-react'
+import { Segment, Image, Card, Icon, Button, Grid, Header, Form, Feed, Radio} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { addFollowingToUser } from '../actions/user'
 import { addInspirationToUser } from '../actions/user'
@@ -242,7 +242,7 @@ class ShowPost extends React.Component {
     followBtn = () => {
         const postUser = this.props.allUsers.find(userObj => userObj.id === this.props.showPost.user.id)
         const isFollowing = this.props.user.following.find(followObj => followObj.id === postUser.id)
-        return isFollowing ? "Following" : <Card onClick={this.handleFollowClick} style={{ backgroundColor: '#36454F',color: 'white'}}>Follow</Card>
+        return isFollowing ? <div>Following</div> : <Card onClick={this.handleFollowClick} style={{ backgroundColor: '#36454F',color: 'white'}}>Follow</Card>
     }
 
     handleDelClick = (id) => {

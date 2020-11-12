@@ -1,8 +1,7 @@
 import React from 'react'
-// import { fetchPostsSuccess } from '../actions/allPosts'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Menu, Input, Segment, Grid, Dropdown, Header, Card} from 'semantic-ui-react'
+import { Menu, Input, Segment, Grid, Dropdown, Header} from 'semantic-ui-react'
 import FollowTile from "./FollowTile.js"
 
 class ShowFollowContainer extends React.Component {
@@ -63,13 +62,13 @@ class ShowFollowContainer extends React.Component {
                 name='Followers'
                 active={activeItem === 'Followers'}
                 onClick={this.handleItemClick}
-                style={{color: 'white'}}
+                style={this.state.activeItem === 'Followers' ? {color: '#FED700'} : {color:'white'}}
                 />
                 <Menu.Item
                 name='Following'
                 active={activeItem === 'Following'}
                 onClick={this.handleItemClick}
-                style={{color: 'white'}}
+                style={this.state.activeItem === 'Following' ? {color: '#FED700'} : {color:'white'}}
                 />
                 <Dropdown item text={this.state.sortBy} style={{color: 'white'}}>
                 <Dropdown.Menu>
@@ -78,15 +77,14 @@ class ShowFollowContainer extends React.Component {
                 </Dropdown.Menu>
                 </Dropdown>
                 <Menu.Menu position='right'>
-                <Menu.Item>
                     <Input
+                    style={{marginRight: '15px', color:'white'}}
                     transparent
                     icon={{ name: 'search', link: true }}
                     placeholder='Search by Name'
                     value={this.state.searchQuery}
                     onChange={this.handleSearchChange}
                     />
-                </Menu.Item>
                 </Menu.Menu>
             </Menu>
             <Segment attached='bottom'>

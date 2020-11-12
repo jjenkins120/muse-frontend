@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Card, Image, Icon, Segment, Header, Feed, Divider, Radio, Button, Form, Container} from 'semantic-ui-react'
+import { Card, Image, Icon, Segment, Header, Feed, Radio, Button, Form} from 'semantic-ui-react'
 import { selectPost } from '../actions/showPost'
 import { selectUser } from '../actions/showUser'
 import { fetchCommentsSuccess } from '../actions/comments'
@@ -172,21 +172,20 @@ class PostTile extends React.Component {
 
     render(){
         const postInstance = this.props.allPosts.find(postObj => postObj.id === this.props.post.id)
+        const userInstance = this.props.allUsers.find(userObj => userObj.id === this.props.post.user_id)
         return(
             <div>
                 <Segment vertical style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}>
                     {this.renderMedia(postInstance)}
                 </Segment>
                 <Segment onClick={() => this.props.selectPost(postInstance)} basic>
-                    <Link to={`/home/showpost/${postInstance.id}`}>
-                    <Header as='h2'>
-                        <Image src={postInstance.user.image_url} circular/>
+                    <Header as='h2' style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}>
                         <Header.Content>
-                        {postInstance.title} 
+                        <Link to={`/home/showpost/${postInstance.id}`} style={{color: '#36454F'}}>{postInstance.title}</Link>
                         <Header.Subheader> by {postInstance.user.first_name} {postInstance.user.last_name}</Header.Subheader>
+                        <Link to={`/home/showuser/${userInstance.id}`}><Image src={userInstance.image_url} circular size='tiny' onClick={() => this.props.selectUser(userInstance)} style={{margin: 'auto', justifyContent: 'center', marginTop: '10px'}}/></Link>
                         </Header.Content>
                     </Header>
-                    </Link>
                 </Segment>
                     <Segment basic><Radio slider onClick={this.handleToggleClick} /></Segment>
                     {this.renderComments(postInstance)}

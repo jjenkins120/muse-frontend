@@ -1,8 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
 import { Menu, Input, Segment, Grid, Dropdown} from 'semantic-ui-react'
 import PostTile from "./PostTile.js"
+import moment from 'moment'
 
 
 class PostContainer extends React.Component {
@@ -10,7 +10,7 @@ class PostContainer extends React.Component {
   state = { 
     activeItem: 'All',
     searchQuery: '', 
-    sortBy: 'Newest' 
+    sortBy: 'Sort' 
   }
   
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
@@ -41,10 +41,11 @@ class PostContainer extends React.Component {
     if (this.state.sortBy === 'Sort'){
       return this.renderPosts(Posts)
     } else if (this.state.sortBy === 'Newest'){
-      const newestPosts = Posts.sort((a, b) => b.updated_at - a.updated_at)
+      
+      const newestPosts = Posts.sort((a, b) => b.created_at - a.created_at)
       return this.renderPosts(newestPosts)
     } else if (this.state.sortBy === 'Oldest'){
-      const oldestPosts = Posts.sort((a, b) => b.updated_at - a.updated_at).reverse()
+      const oldestPosts = Posts.sort((a, b) => b.created_at - a.created_at).reverse()
       return this.renderPosts(oldestPosts)
     } else if (this.state.sortBy === 'Inspired Most'){
       const mostInspiredPosts = Posts.sort((a, b) => b.posts.length - a.posts.length)
@@ -70,13 +71,13 @@ class PostContainer extends React.Component {
             name='All'
             active={activeItem === 'All'}
             onClick={this.handleItemClick}
-            style={{color: 'white'}}
+            style={this.state.activeItem === 'All' ? {color: '#FED700'} : {color:'white'}}
           />
           <Menu.Item
             name='Inspired Me'
             active={activeItem === 'Inspired Me'}
             onClick={this.handleItemClick}
-            style={{ color: 'white'}}
+            style={this.state.activeItem === 'Inspired Me' ? {color: '#FED700'}: {color:'white'}}
           />
           <Dropdown item text={this.state.sortBy} style={{color: 'white'}}>
             <Dropdown.Menu>
@@ -87,21 +88,17 @@ class PostContainer extends React.Component {
             </Dropdown.Menu>
           </Dropdown>
           <Menu.Menu position='right'>
-            <Menu.Item>
               <Input
+                style={{marginRight: '15px', color:'white'}}
                 transparent
                 icon={{ name: 'search'}}
                 placeholder='Search by Title / Artist...'
                 value={this.state.searchQuery}
                 onChange={this.handleSearchChange}
               />
-            </Menu.Item>
           </Menu.Menu>
         </Menu>
-
-        {/* <Segment attached='bottom'> */}
           {this.tabDisplay(searchedPosts.reverse())}
-        {/* </Segment> */}
         </Grid.Column>
       </Grid>
       </div>
