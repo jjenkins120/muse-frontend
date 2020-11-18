@@ -23,6 +23,15 @@ class NavBar extends Component {
    return this.props.user.image_url ? <Image src={this.props.user.image_url} circular size='mini' /> : <div>{this.props.user.username}</div>
   }
 
+  renderMessages = () => {
+    if (this.props.user.received_messages){
+      const unreadMessages = this.props.user.received_messages.filter(messageObj => messageObj.read === false)
+      return `Messages (${unreadMessages.length})`
+    } else {
+      return "Messages"
+    }
+  }
+
   render() {
     return (
       <div style={{backgroundColor: 'white'}}>
@@ -32,6 +41,7 @@ class NavBar extends Component {
             <Menu.Item ><Link to={`/home`}><Image src={muselogo} size='tiny' style={{ paddingBottom: '7px' }}/></Link></Menu.Item>
             <Dropdown style={{ marginTop: '20px', marginRight: '15px'}} >
               <Dropdown.Menu>
+                <Link to='/home/messages'><Dropdown.Item>{this.renderMessages()}</Dropdown.Item></Link>
                 <Link to='/home/newpost'><Dropdown.Item>Post New Art</Dropdown.Item></Link>
                 <Link to={`/home/edituser/${this.props.user.id}`}><Dropdown.Item>Edit My Profile</Dropdown.Item></Link>
                 <Link to='/'><Dropdown.Item onClick={this.handleClick}>Logout</Dropdown.Item></Link>

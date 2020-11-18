@@ -41,11 +41,10 @@ class PostContainer extends React.Component {
     if (this.state.sortBy === 'Sort'){
       return this.renderPosts(Posts)
     } else if (this.state.sortBy === 'Newest'){
-      
-      const newestPosts = Posts.sort((a, b) => b.created_at - a.created_at)
+      const newestPosts = Posts.sort((a, b) => b.created_at - a.created_at).reverse()
       return this.renderPosts(newestPosts)
     } else if (this.state.sortBy === 'Oldest'){
-      const oldestPosts = Posts.sort((a, b) => b.created_at - a.created_at).reverse()
+      const oldestPosts = Posts.sort((a, b) => b.created_at - a.created_at)
       return this.renderPosts(oldestPosts)
     } else if (this.state.sortBy === 'Inspired Most'){
       const mostInspiredPosts = Posts.sort((a, b) => b.posts.length - a.posts.length)
@@ -98,7 +97,7 @@ class PostContainer extends React.Component {
               />
           </Menu.Menu>
         </Menu>
-          {this.tabDisplay(searchedPosts.reverse())}
+          {this.tabDisplay(searchedPosts)}
         </Grid.Column>
       </Grid>
       </div>

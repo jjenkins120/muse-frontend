@@ -6,6 +6,7 @@ import { fetchAllUsersSuccess } from '../actions/allUsers'
 import { fetchAllUserPostsSuccess } from '../actions/userPosts'
 import { fetchFollowsSuccess } from '../actions/follows'
 import { fetchCommentsSuccess } from '../actions/comments'
+import { fetchMessagesSuccess } from '../actions/messages'
 import { Route, Switch } from 'react-router-dom'
 import NavBar from "./NavBar.js"
 import PostContainer from "./PostContainer.js"
@@ -15,6 +16,7 @@ import NewInspiredPost from './NewInspiredPost.js';
 import ShowUser from './ShowUser.js';
 import EditUser from './EditUser.js';
 import ShowFollowContainer from './ShowFollowContainer.js'
+import MessageContainer from './MessageContainer.js'
 
 
 class Home extends React.Component {
@@ -64,6 +66,11 @@ class Home extends React.Component {
       .then(comments => {
         this.props.fetchCommentsSuccess(comments)
       })
+      fetch('http://localhost:3000/messages')
+      .then(resp => resp.json())
+      .then(messages => {
+        this.props.fetchMessagesSuccess(messages)
+      })
     }
 
     render(){
@@ -77,7 +84,8 @@ class Home extends React.Component {
               <Route exact path={'/home/newinspiredpost'} component={NewInspiredPost} />
               <Route exact path={'/home/showuser/:id'} component={ShowUser} />
               <Route exact path={'/home/edituser/:id'} component={EditUser} />
-              <Route exact path={'/home/showfollow/:id'} component={ShowFollowContainer} />
+              <Route exact path={'/home/showfollow/:id'} component={ShowFollowContainer}/>
+              <Route exact path={'/home/messages'} component={MessageContainer}/>
             </Switch>
         </div>
       );
@@ -91,6 +99,7 @@ class Home extends React.Component {
     fetchAllUserPostsSuccess,
     fetchFollowsSuccess,
     fetchCommentsSuccess,
+    fetchMessagesSuccess,
   }
 
   export default connect(null, mapDispatchToProps)(Home);
