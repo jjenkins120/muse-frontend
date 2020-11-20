@@ -8,7 +8,7 @@ class MessageContainer extends React.Component {
     renderMessageTile = () => {
         if (this.props.user.received_messages !== 0){
             return this.props.user.received_messages.map(messageObj => {
-                return <Segment style={{backgroundColor: '#EBAE34'}}><MessageTile message={messageObj}/></Segment>
+                return <Segment style={messageObj.read ? {backgroundColor: '#ECAE34', color: 'white'} : {backgroundColor: '#36464F', color: 'white'}}><MessageTile message={messageObj}/></Segment>
             })
         } else {
             return "You have no messages"
@@ -19,7 +19,13 @@ class MessageContainer extends React.Component {
     render(){
         return (
             <div>
-                {this.renderMessageTile()}
+                <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='top'>
+                    <Grid.Column style={{ width: 900, marginTop: 50 }} >
+                        <Segment>
+                        {this.renderMessageTile()}
+                        </Segment>
+                    </Grid.Column>  
+                </Grid>  
             </div>
         )
     }
