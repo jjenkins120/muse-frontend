@@ -70,6 +70,7 @@ class Home extends React.Component {
       .then(resp => resp.json())
       .then(messages => {
         this.props.fetchMessagesSuccess(messages)
+        console.log(messages)
       })
     }
 

@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { Card, Image, Icon, Segment, Header, Feed, Radio, Button, Form, Grid, Divider} from 'semantic-ui-react'
 import moment from 'moment'
 import toaster from 'toasted-notes'
-import {fetchMessagesSuccess} from '../actions/messages'
+import { fetchMessagesSuccess } from '../actions/messages'
+import { fetchAllUsersSuccess } from '../actions/allUsers'
 
 class MessageTile extends React.Component {
     
@@ -19,6 +20,19 @@ class MessageTile extends React.Component {
             this.props.fetchMessagesSuccess(messages)
         })
     }
+
+    // sendMessageDelFetch = () => {
+    //     fetch('http://localhost:3000/messages')
+    //     .then(resp => resp.json())
+    //     .then(messages => {
+    //         this.props.fetchMessagesSuccess(messages)
+    //     })
+    //     fetch('http://localhost:3000/users')
+    //     .then(resp => resp.json())
+    //     .then(users => {
+    //         this.props.fetchAllUsersSuccess(users)
+    //     })
+    // }
 
     handleRepClick = (id) => {
         this.setState({
@@ -89,6 +103,18 @@ class MessageTile extends React.Component {
             })
         }) 
     }
+
+    // handleDelClick = (id) => {
+    //     const delReqObj = {
+    //         method: 'DELETE'
+    //     }
+    //     fetch(`http://localhost:3000/messages/${id}`, delReqObj)
+    //     .then(resp => resp.json())
+    //     .then(() => {
+    //         this.sendMessageDelFetch()
+    //         toaster.notify("Your message was deleted")
+    //     }) 
+    // }
     
     replyForm = () => {
       return this.state.replyClick ? <div><Grid.Row><Form><Form.Group widths='equal'>
@@ -106,15 +132,13 @@ class MessageTile extends React.Component {
                     </Grid.Column>
                     <Grid.Column width={7} style={{margin: 'auto'}}>
                     <Grid.Row>
-                        <Segment style={{color:'black'}}>
-                        {messageToRender.content}
-                        </Segment>
+                        {messageToRender.read ? <Segment style={{color:'black'}}>{messageToRender.content}</Segment> : <Segment style={{backgroundColor: 'yellow', color:'black'}}>{messageToRender.content}</Segment> }
                     </Grid.Row>  
                     <Grid.Row style={{margin: 'auto', marginTop: '10px'}}>  
                         <Icon name='reply' onClick={() => this.handleRepClick(this.props.message.id)}/>
-                        <Icon name='delete'/>
+                        {/* <Icon name='delete' onClick={() => this.handleDelClick(this.props.message.id)}/> */}
                         <br/>
-                        {messageToRender.replied ? "You've replied to this message" : "You have not responded to this message" }
+                        {messageToRender.replied ? "Replied Already" : "Not Yet Replied" }
                     </Grid.Row> 
                     {this.replyForm()}   
                     </Grid.Column>
@@ -133,7 +157,8 @@ const mapStateToProps = (state) => {
   }
   
 const mapDispatchToProps = {
-   fetchMessagesSuccess
+   fetchMessagesSuccess, 
+   fetchAllUsersSuccess
 }
 
-export default connect(mapStateToProps, null)(MessageTile);
+export default connect(mapStateToProps, mapDispatchToProps)(MessageTile);
