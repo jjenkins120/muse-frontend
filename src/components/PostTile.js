@@ -173,6 +173,11 @@ class PostTile extends React.Component {
     render(){
         const postInstance = this.props.allPosts.find(postObj => postObj.id === this.props.post.id)
         const userInstance = this.props.allUsers.find(userObj => userObj.id === this.props.post.user_id)
+
+        if (!postInstance || !userInstance){
+            return null
+        }
+
         return(
             <div>
                 <Segment vertical style={{margin: 'auto', display: 'flex', justifyContent: 'center'}}>
